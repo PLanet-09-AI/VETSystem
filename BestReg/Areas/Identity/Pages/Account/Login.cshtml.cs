@@ -74,6 +74,14 @@ namespace BestReg.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    // Fetch the user by email
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                    if (user != null && await _signInManager.UserManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        // Redirect to Admin/Index if the user is in the Admin role
+                        return LocalRedirect(Url.Content("~/Admin/Index"));
+                    }
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
@@ -96,5 +104,6 @@ namespace BestReg.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
     }
 }

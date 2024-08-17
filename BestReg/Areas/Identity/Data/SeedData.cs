@@ -1,5 +1,8 @@
 ﻿using BestReg.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 public static class SeedData
 {
@@ -8,16 +11,17 @@ public static class SeedData
         // Define roles to be created
         string[] roleNames = { "Admin", "Parent", "SchoolAuthority", "BusDriver" };
 
-        // Seed roles
+        // Ensure roles are created
         await EnsureRoles(roleManager, roleNames);
 
         // Seed the admin user
         var adminEmail = "admin@school.com";
-        var adminPassword = "SuperSecurePassword12345!@#$%^&*()";
-        await EnsureUser(userManager, adminEmail, adminPassword, "Admin", "User", "DefaultProvince", new string[] { "Admin" });
+        var adminPassword = "SuperSecurePassword12345!@#$%^&*()"; // Replace with your secure password
+
+        // Ensure Admin user is created and assigned the Admin role
+        await EnsureUser(userManager, roleManager, adminEmail, adminPassword, "Admin", "User", "DefaultProvince", new string[] { "Admin" });
     }
 
-    // Make this method public so it can be accessed from other classes
     public static async Task EnsureRoles(RoleManager<IdentityRole> roleManager, string[] roleNames)
     {
         foreach (var roleName in roleNames)
@@ -33,8 +37,7 @@ public static class SeedData
         }
     }
 
-    // Make this method public if needed for access from other classes
-    public static async Task EnsureUser(UserManager<BestRegUser> userManager, string email, string password, string firstName, string lastName, string province, string[] roles)
+    public static async Task EnsureUser(UserManager<BestRegUser> userManager, RoleManager<IdentityRole> roleManager, string email, string password, string firstName, string lastName, string province, string[] roles)
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user == null)
@@ -54,12 +57,26 @@ public static class SeedData
             {
                 foreach (var role in roles)
                 {
-                    await userManager.AddToRoleAsync(user, role);
+                    if (!await userManager.IsInRoleAsync(user, role))
+                    {
+                        await userManager.AddToRoleAsync(user, role);
+                    }
                 }
             }
             else
             {
                 throw new Exception($"Failed to create user '{email}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+        }
+        else
+        {
+            // Ensure the user is in the required roles
+            foreach (var role in roles)
+            {
+                if (!await userManager.IsInRoleAsync(user, role))
+                {
+                    await userManager.AddToRoleAsync(user, role);
+                }
             }
         }
     }
