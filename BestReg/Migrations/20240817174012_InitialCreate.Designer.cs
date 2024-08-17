@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BestReg.Migrations
 {
     [DbContext(typeof(BestDBContextReg))]
-    [Migration("20240703100031_initial migrate")]
-    partial class initialmigrate
+    [Migration("20240817174012_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
