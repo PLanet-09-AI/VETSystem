@@ -1,8 +1,10 @@
 ﻿using BestReg.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -39,6 +41,8 @@ namespace BestReg.Areas.Identity.Pages.Account
         public InputModel Input { get; set; }
 
         public IList<IdentityRole> Roles { get; set; }
+
+        public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
         public string ReturnUrl { get; set; }
 
@@ -79,17 +83,28 @@ namespace BestReg.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
+        //public async Task<IActionResult> OnGetAsync(string returnUrl = null)
+        //{
+        //    ReturnUrl = returnUrl;
+        //    Roles = _roleManager.Roles.ToList();
+        //    ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        //    return Page();
+        //}
+
         public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            Roles = _roleManager.Roles.ToList();
+            Roles = await _roleManager.Roles.ToListAsync(); // Fetch roles from the database
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             return Page();
         }
+
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
             Roles = _roleManager.Roles.ToList();
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {

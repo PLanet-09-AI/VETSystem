@@ -62,7 +62,9 @@ namespace BestReg.Data
                 Email = "admin@gmail.com",
                 FirstName = "Admin",
                 LastName = "User",
-                IDNumber = "123456789012"
+                IDNumber = "123456789012",
+                  LockoutEnabled = false,  // Ensure the account is not locked out
+                EmailConfirmed = true // Skip email confirmation for admin
             };
 
             var result = await userManager.CreateAsync(adminUser, "Admin@1234");
