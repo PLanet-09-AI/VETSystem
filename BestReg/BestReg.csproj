@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BarCode" Version="2024.7.2" />
+    <PackageReference Include="MailKit" Version="4.7.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
@@ -15,11 +17,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DbInitializer\" />
-    <Folder Include="Services\" />
+    <PackageReference Include="MimeKit" Version="4.7.1" />
+    <PackageReference Include="ZXing.Net" Version="0.16.9" />
+    <!-- Use only one IronBarCode version -->
+    <!-- <PackageReference Include="IronBarCode" Version="2023.8.1" /> -->
+    <PackageReference Include="IronBarCode" Version="2023.9.0" />
   </ItemGroup>
 
 </Project>
