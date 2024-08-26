@@ -125,8 +125,6 @@ public class EmailService : IEmailService
         }
     }
 
-
-    // QR Code generation remains the same
     public byte[] GenerateQrCode(string text)
     {
         var qrCodeWriter = new BarcodeWriterPixelData

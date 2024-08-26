@@ -83,14 +83,6 @@ namespace BestReg.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-        //public async Task<IActionResult> OnGetAsync(string returnUrl = null)
-        //{
-        //    ReturnUrl = returnUrl;
-        //    Roles = _roleManager.Roles.ToList();
-        //    ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-        //    return Page();
-        //}
-
         public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
@@ -98,7 +90,6 @@ namespace BestReg.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             return Page();
         }
-
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {

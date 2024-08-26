@@ -18,9 +18,12 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Register the EmailService with the dependency injection container
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 // Add services to the container
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
