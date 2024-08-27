@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -86,7 +88,7 @@ namespace BestReg.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            Roles = await _roleManager.Roles.ToListAsync(); // Fetch roles from the database
+            Roles = await _roleManager.Roles.ToListAsync();
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             return Page();
         }
@@ -105,7 +107,8 @@ namespace BestReg.Areas.Identity.Pages.Account
                     Email = Input.Email,
                     FirstName = Input.FirstName,
                     LastName = Input.LastName,
-                    IDNumber = Input.IDNumber
+                    IDNumber = Input.IDNumber,
+                     EmailConfirmed = true   //Marking email confirmation true for now.
                 };
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -115,35 +118,47 @@ namespace BestReg.Areas.Identity.Pages.Account
                     if (await _roleManager.RoleExistsAsync(Input.SelectedRole))
                     {
                         await _userManager.AddToRoleAsync(user, Input.SelectedRole);
+
+                        // Generate and save QR code if the user is a student
+                        if (Input.SelectedRole == "Student")
+                        {
+                            var qrCodeBytes = _emailService.GenerateQrCode(user.IDNumber);
+                            user.QrCodeBase64 = Convert.ToBase64String(qrCodeBytes);
+                            await _userManager.UpdateAsync(user);
+                        }
                     }
+
 
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                    // Automatically sign in the user after registration
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return LocalRedirect(returnUrl);
 
-                    await _emailService.SendConfirmationEmailAsync(Input.Email, callbackUrl);
 
-                    var qrCodeImage = _emailService.GenerateQrCode(user.Email);
-                    var qrCodeBase64 = Convert.ToBase64String(qrCodeImage);
+                    //_logger.LogInformation("User created a new account with password.");
 
-                    await _emailService.SendQrCodeEmailAsync(Input.Email, qrCodeBase64);
+                    //var userId = await _userManager.GetUserIdAsync(user);
+                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    //var callbackUrl = Url.Page(
+                    //    "/Account/ConfirmEmail",
+                    //    pageHandler: null,
+                    //    values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                    //    protocol: Request.Scheme);
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                    //await SendEmailAsync(Input.Email, "Confirm your email",
+                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    //{
+                    //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                    //}
+                    //else
+                    //{
+                    //    await _signInManager.SignInAsync(user, isPersistent: false);
+                    //    return LocalRedirect(returnUrl);
+                    //}
                 }
 
                 foreach (var error in result.Errors)
@@ -153,6 +168,34 @@ namespace BestReg.Areas.Identity.Pages.Account
             }
 
             return Page();
+        }
+
+        private async Task<bool> SendEmailAsync(string email, string subject, string confirmLink)
+        {
+            try
+            {
+                MailMessage message = new MailMessage();
+                SmtpClient smtpClient = new SmtpClient();
+                message.From = new MailAddress("dutengagement@outlook.com");
+                message.To.Add(email);
+                message.Subject = subject;
+                message.IsBodyHtml = true;
+                message.Body = confirmLink;
+
+                smtpClient.Port = 587;
+                smtpClient.Host = "smtp.outlook.com";
+                smtpClient.EnableSsl = true;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential("dutengagement@outlook.com", "Admin@Dut01");
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.Send(message);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while sending the email: {Message}", ex.Message);
+                return false;
+            }
         }
     }
 }

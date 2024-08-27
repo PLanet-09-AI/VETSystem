@@ -64,7 +64,8 @@ namespace BestReg.Data
                 LastName = "User",
                 IDNumber = "123456789012",
                   LockoutEnabled = false,  // Ensure the account is not locked out
-                EmailConfirmed = true // Skip email confirmation for admin
+                EmailConfirmed = true, // Skip email confirmation for admin
+                QrCodeBase64 = null
             };
 
             var result = await userManager.CreateAsync(adminUser, "Admin@1234");
