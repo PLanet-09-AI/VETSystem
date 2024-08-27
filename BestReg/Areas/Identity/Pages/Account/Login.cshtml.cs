@@ -79,7 +79,7 @@ namespace BestReg.Areas.Identity.Pages.Account
                     {
                         var roles = await _userManager.GetRolesAsync(user);
 
-                        if (roles.Contains("Student"))
+                        if (roles.Contains("Student") || roles.Contains("Parent"))
                         {
                             return RedirectToAction("ShowQrCode", "QrCode");
                         }
@@ -111,7 +111,5 @@ namespace BestReg.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
-
-
     }
 }
