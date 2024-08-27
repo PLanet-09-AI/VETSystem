@@ -1,202 +1,201 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
-
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using BestReg.Data;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using BestReg.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace BestReg.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<BestRegUser> _signInManager;
-        private readonly UserManager<BestRegUser> _userManager;
-        private readonly IUserStore<BestRegUser> _userStore;
-        private readonly IUserEmailStore<BestRegUser> _emailStore;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailService _emailService;
 
         public RegisterModel(
-            UserManager<BestRegUser> userManager,
-            IUserStore<BestRegUser> userStore,
-            SignInManager<BestRegUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailService emailService)
         {
             _userManager = userManager;
-            _userStore = userStore;
-            _emailStore = GetEmailStore();
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _logger = logger;
-            _emailSender = emailSender;
+            _emailService = emailService;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public string ReturnUrl { get; set; }
+        public IList<IdentityRole> Roles { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        public string ReturnUrl { get; set; }
+
         public class InputModel
         {
-
             [Required]
             [StringLength(50, ErrorMessage = "Max 50 characters allowed")]
-            [Display(Name = "FirstName")]
+            [Display(Name = "First Name")]
             public string FirstName { get; set; }
 
             [Required]
             [StringLength(50, ErrorMessage = "Max 50 characters allowed")]
-            [Display(Name = "LastName")]
+            [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
             [Required]
-            public string Province { get; set; }
+            [StringLength(12, ErrorMessage = "IDNumber cannot be longer than 12 characters.")]
+            [RegularExpression(@"^\d{12}$", ErrorMessage = "IDNumber must be exactly 12 digits.")]
+            public string IDNumber { get; set; }
 
             [Required]
-            public string SourceOfFunding { get; set; }
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            public string SelectedRole { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
         }
 
-
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+            Roles = await _roleManager.Roles.ToListAsync();
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+            Roles = _roleManager.Roles.ToList();
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    IDNumber = Input.IDNumber,
+                     EmailConfirmed = true   //Marking email confirmation true for now.
+                };
 
-                user.FirstName = Input.FirstName;
-                user.LastName = Input.LastName;
-                user.Province = Input.Province;
-                user.SourceOfFunding = Input.SourceOfFunding;
-
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
+                    if (await _roleManager.RoleExistsAsync(Input.SelectedRole))
+                    {
+                        await _userManager.AddToRoleAsync(user, Input.SelectedRole);
+
+                        // Generate and save QR code if the user is a student
+                        if (Input.SelectedRole == "Student")
+                        {
+                            var qrCodeBytes = _emailService.GenerateQrCode(user.IDNumber);
+                            user.QrCodeBase64 = Convert.ToBase64String(qrCodeBytes);
+                            await _userManager.UpdateAsync(user);
+                        }
+                    }
+
+
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                    // Automatically sign in the user after registration
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return LocalRedirect(returnUrl);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                    //_logger.LogInformation("User created a new account with password.");
+
+                    //var userId = await _userManager.GetUserIdAsync(user);
+                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    //var callbackUrl = Url.Page(
+                    //    "/Account/ConfirmEmail",
+                    //    pageHandler: null,
+                    //    values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                    //    protocol: Request.Scheme);
+
+                    //await SendEmailAsync(Input.Email, "Confirm your email",
+                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    //{
+                    //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                    //}
+                    //else
+                    //{
+                    //    await _signInManager.SignInAsync(user, isPersistent: false);
+                    //    return LocalRedirect(returnUrl);
+                    //}
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
         }
 
-        private BestRegUser CreateUser()
+        private async Task<bool> SendEmailAsync(string email, string subject, string confirmLink)
         {
             try
             {
-                return Activator.CreateInstance<BestRegUser>();
-            }
-            catch
-            {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(BestRegUser)}'. " +
-                    $"Ensure that '{nameof(BestRegUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
-            }
-        }
+                MailMessage message = new MailMessage();
+                SmtpClient smtpClient = new SmtpClient();
+                message.From = new MailAddress("dutengagement@outlook.com");
+                message.To.Add(email);
+                message.Subject = subject;
+                message.IsBodyHtml = true;
+                message.Body = confirmLink;
 
-        private IUserEmailStore<BestRegUser> GetEmailStore()
-        {
-            if (!_userManager.SupportsUserEmail)
-            {
-                throw new NotSupportedException("The default UI requires a user store with email support.");
+                smtpClient.Port = 587;
+                smtpClient.Host = "smtp.outlook.com";
+                smtpClient.EnableSsl = true;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential("dutengagement@outlook.com", "Admin@Dut01");
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.Send(message);
+                return true;
             }
-            return (IUserEmailStore<BestRegUser>)_userStore;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while sending the email: {Message}", ex.Message);
+                return false;
+            }
         }
     }
 }

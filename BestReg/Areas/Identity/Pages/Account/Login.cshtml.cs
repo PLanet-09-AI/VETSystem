@@ -7,18 +7,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using BestReg.Areas.Identity.Data;
+using BestReg.Data;
 
 namespace BestReg.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<BestRegUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public LoginModel(SignInManager<BestRegUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -67,19 +69,24 @@ namespace BestReg.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    // Fetch the user by email
-                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
-                    if (user != null && await _signInManager.UserManager.IsInRoleAsync(user, "Admin"))
+                    var user = await _userManager.FindByNameAsync(Input.Email);
+                    if (user != null)
                     {
-                        // Redirect to Admin/Index if the user is in the Admin role
-                        return LocalRedirect(Url.Content("~/Admin/Index"));
+                        var roles = await _userManager.GetRolesAsync(user);
+
+                        if (roles.Contains("Student"))
+                        {
+                            return RedirectToAction("ShowQrCode", "QrCode");
+                        }
+                        if (roles.Contains("Admin"))
+                        {
+                            return RedirectToAction("Index", "Admin");
+                        }
                     }
 
                     _logger.LogInformation("User logged in.");
@@ -104,6 +111,7 @@ namespace BestReg.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
 
     }
 }

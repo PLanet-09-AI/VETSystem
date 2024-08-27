@@ -1,24 +1,29 @@
-using BestReg.Areas.Identity.Data;
+using BestReg.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Setup database connection string
-var connectionString = builder.Configuration.GetConnectionString("BestDBContextRegConnection")
-    ?? throw new InvalidOperationException("Connection string 'BestDBContextRegConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 // Configure services for DbContext and Identity
-builder.Services.AddDbContext<BestDBContextReg>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<BestRegUser>(options =>
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()  // Add roles to the Identity system
-    .AddEntityFrameworkStores<BestDBContextReg>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Add services to the container.
+// Register the EmailService with the dependency injection container
+builder.Services.AddTransient<IEmailService, EmailService>();
+
+// Add services to the container
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -28,9 +33,10 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        var userManager = services.GetRequiredService<UserManager<BestRegUser>>();
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        await SeedData.Initialize(services, userManager, roleManager);
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await DbInitializer.InitializeAsync(context, userManager, roleManager);
     }
     catch (Exception ex)
     {
@@ -39,16 +45,19 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
