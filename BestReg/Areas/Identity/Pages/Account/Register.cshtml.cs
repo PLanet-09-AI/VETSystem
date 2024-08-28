@@ -61,8 +61,8 @@ namespace BestReg.Areas.Identity.Pages.Account
             public string LastName { get; set; }
 
             [Required]
-            [StringLength(12, ErrorMessage = "IDNumber cannot be longer than 12 characters.")]
-            [RegularExpression(@"^\d{12}$", ErrorMessage = "IDNumber must be exactly 12 digits.")]
+            [StringLength(12, ErrorMessage = "IDNumber cannot be longer than 13 characters.")]
+            [RegularExpression(@"^\d{12}$", ErrorMessage = "IDNumber must be exactly 13 digits.")]
             public string IDNumber { get; set; }
 
             [Required]

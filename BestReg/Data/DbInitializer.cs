@@ -31,7 +31,7 @@ namespace BestReg.Data
             {
                 "Admin",
                 "SchoolSecurity",
-                "Bus driver",
+                "BusDriver",
                 "Student"
             };
 
