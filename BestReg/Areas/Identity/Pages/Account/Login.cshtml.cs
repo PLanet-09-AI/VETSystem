@@ -81,11 +81,19 @@ namespace BestReg.Areas.Identity.Pages.Account
 
                         if (roles.Contains("Student") || roles.Contains("Parent"))
                         {
-                            return RedirectToAction("ShowQrCode", "QrCode");
+                            return RedirectToAction("Index", "Parent");
                         }
                         if (roles.Contains("Admin"))
                         {
                             return RedirectToAction("Index", "Admin");
+                        }
+                        if (roles.Contains("SchoolSecurity"))
+                        {
+                            return RedirectToAction("Index", "SchoolAuthority");
+                        }
+                        if (roles.Contains("BusDriver"))
+                        {
+                            return RedirectToAction("Index", "BusDriver");
                         }
                     }
 

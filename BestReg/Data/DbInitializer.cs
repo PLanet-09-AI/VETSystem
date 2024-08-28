@@ -31,7 +31,7 @@ namespace BestReg.Data
             {
                 "Admin",
                 "SchoolSecurity",
-                "Parent",
+                "BusDriver",
                 "Student"
             };
 
@@ -63,7 +63,7 @@ namespace BestReg.Data
                 FirstName = "Admin",
                 LastName = "User",
                 IDNumber = "123456789012",
-                  LockoutEnabled = false,  // Ensure the account is not locked out
+                LockoutEnabled = false,  // Ensure the account is not locked out
                 EmailConfirmed = true, // Skip email confirmation for admin
                 QrCodeBase64 = null
             };
