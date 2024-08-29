@@ -74,26 +74,38 @@ namespace BestReg.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByNameAsync(Input.Email);
+                    var user = await _userManager.FindByEmailAsync(Input.Email); // Using email to find user, ensure email is used for login
                     if (user != null)
                     {
                         var roles = await _userManager.GetRolesAsync(user);
 
-                        if (roles.Contains("Student") || roles.Contains("Parent"))
-                        {
-                            return RedirectToAction("Index", "Parent");
-                        }
                         if (roles.Contains("Admin"))
                         {
                             return RedirectToAction("Index", "Admin");
                         }
-                        if (roles.Contains("SchoolSecurity"))
+                        if (roles.Contains("SystemAdmin"))
                         {
-                            return RedirectToAction("Index", "SchoolAuthority");
+                            return RedirectToAction("Index", "SystemAdmin");
                         }
-                        if (roles.Contains("BusDriver"))
+                        if (roles.Contains("FarmManager"))
                         {
-                            return RedirectToAction("Index", "BusDriver");
+                            return RedirectToAction("Appointments", "FarmManager");
+                        }
+                        if (roles.Contains("Veterinarian"))
+                        {
+                            return RedirectToAction("Schedule", "Vet");
+                        }
+                        if (roles.Contains("FarmWorker"))
+                        {
+                            return RedirectToAction("Tasks", "FarmWorker");
+                        }
+                        if (roles.Contains("VetAdmin"))
+                        {
+                            return RedirectToAction("Index", "VetAdmin");
+                        }
+                        if (roles.Contains("ExternalSupplier"))
+                        {
+                            return RedirectToAction("Orders", "Supplier");
                         }
                     }
 
@@ -119,5 +131,6 @@ namespace BestReg.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
     }
 }

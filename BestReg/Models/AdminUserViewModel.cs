@@ -5,8 +5,10 @@ namespace BestReg.Models
 {
     public class AdminUserViewModel
     {
-        public IEnumerable<ApplicationUser> Users { get; set; }
-        public UserManager<ApplicationUser> UserManager { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public List<string> Roles { get; set; }  // This property holds the roles
     }
 
 }

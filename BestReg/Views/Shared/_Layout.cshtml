@@ -46,16 +46,43 @@
                                         <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
                                     </li>
                                 }
-                                else if (roles.Contains("Student"))
+                                if (roles.Contains("SystemAdmin"))
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="QrCode" asp-action="ShowQrCode">My QR Code</a>
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">System Admin Dashboard</a>
                                     </li>
                                 }
-                                else if (roles.Contains("Parent"))
+                                if (roles.Contains("FarmManager"))
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="QrCode" asp-action="ShowQrCode">My Child's QR Code</a>
+                                        <a class="nav-link" asp-controller="FarmManager" asp-action="Appointments">View Appointments</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="FarmManager" asp-action="BookAppointment">Book New Appointment</a>
+                                    </li>
+                                }
+                                if (roles.Contains("Veterinarian"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Vet" asp-action="Schedule">Vet Dashboard</a>
+                                    </li>
+                                }
+                                if (roles.Contains("FarmWorker"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="FarmWorker" asp-action="Tasks">Farm Worker Tasks</a>
+                                    </li>
+                                }
+                                if (roles.Contains("VetAdmin"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="VetAdmin" asp-action="Index">Vet Admin Dashboard</a>
+                                    </li>
+                                }
+                                if (roles.Contains("ExternalSupplier"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Supplier" asp-action="Orders">Supplier Orders</a>
                                     </li>
                                 }
                             }
@@ -86,7 +113,7 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
                             </li>
-                           
+
                         }
                     </ul>
                 </div>

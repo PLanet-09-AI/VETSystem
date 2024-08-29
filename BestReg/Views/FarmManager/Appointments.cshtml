@@ -1,0 +1,29 @@
+﻿@model IEnumerable<BestReg.Data.VetAppointment>
+
+<h2>Available Appointments</h2>
+
+<a asp-action="Notifications" class="btn btn-info">View Notifications</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Type</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var appointment in Model)
+        {
+            <tr>
+                <td>@appointment.StartTime</td>
+                <td>@appointment.EndTime</td>
+                <td>@appointment.AppointmentType</td>
+                <td>
+                    <a asp-action="BookAppointment" asp-route-id="@appointment.Id" class="btn btn-primary">Book</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

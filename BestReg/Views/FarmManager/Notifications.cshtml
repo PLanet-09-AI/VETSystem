@@ -1,0 +1,39 @@
+﻿@model IEnumerable<BestReg.Data.VetAppointment>
+
+<h2>Notifications</h2>
+
+@if (!Model.Any())
+{
+    <p>No new notifications.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Appointment Type</th>
+                <th>Decline Reason</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var appointment in Model)
+            {
+                <tr>
+                    <td>@appointment.StartTime.ToString("MM/dd/yyyy HH:mm")</td>
+                    <td>@appointment.EndTime.ToString("HH:mm")</td>
+                    <td>@appointment.AppointmentType</td>
+                    <td>@appointment.DeclineReason</td>
+                    <td>
+                        <form asp-action="MarkAsRead" method="post">
+                            <input type="hidden" name="appointmentId" value="@appointment.Id" />
+                            <button type="submit" class="btn btn-success">Mark as Read</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

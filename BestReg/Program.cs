@@ -60,6 +60,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Custom route to map /SystemAdmin to the AdminController's Index action
+app.MapControllerRoute(
+    name: "systemadmin",
+    pattern: "SystemAdmin",
+    defaults: new { controller = "Admin", action = "Index" });
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

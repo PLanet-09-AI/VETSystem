@@ -1,0 +1,54 @@
+﻿@model BestReg.Data.VetAppointment
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>VetAppointment</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EndTime)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EndTime)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AppointmentType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AppointmentType)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.VetAdminId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.VetAdminId)
+        </dd>
+    </dl>
+</div>
+
+@if (!Model.Canceled)
+{
+    <form asp-action="Cancel" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Cancel Appointment</button>
+    </form>
+}
+else
+{
+    <span class="text-danger">This appointment has been canceled.</span>
+}
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

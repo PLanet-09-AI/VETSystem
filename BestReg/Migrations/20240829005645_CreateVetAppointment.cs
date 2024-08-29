@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BestReg.Migrations
 {
     /// <inheritdoc />
-    public partial class initialcreate : Migration
+    public partial class CreateVetAppointment : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,22 @@ namespace BestReg.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VetAppointments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AppointmentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VetAdminId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VetAppointments", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -217,6 +233,9 @@ namespace BestReg.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "VetAppointments");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

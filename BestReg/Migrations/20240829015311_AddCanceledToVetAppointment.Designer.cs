@@ -4,6 +4,7 @@ using BestReg.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BestReg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240829015311_AddCanceledToVetAppointment")]
+    partial class AddCanceledToVetAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,23 +105,6 @@ namespace BestReg.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("BestReg.Data.AppointmentType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppointmentTypes");
-                });
-
             modelBuilder.Entity("BestReg.Data.VetAppointment", b =>
                 {
                     b.Property<int>("Id")
@@ -134,21 +120,8 @@ namespace BestReg.Migrations
                     b.Property<bool>("Canceled")
                         .HasColumnType("bit");
 
-                    b.Property<string>("DeclineReason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsBooked")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeclined")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsNotified")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
