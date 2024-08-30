@@ -1,4 +1,37 @@
 Video for user roles : https://youtu.be/Y6DCP-yH-9Q
+# VetAppointmentManager API
+
+This ASP.NET Core Web API project is designed to manage veterinary appointments. It includes functionality for creating, viewing, editing, canceling, and declining appointments.
+
+## Features
+
+- **CRUD Operations**: Create, read, update, and delete veterinary appointments.
+- **Cancel Appointments**: Specific endpoint to cancel appointments.
+- **Decline Appointments**: Specific endpoint to decline appointments with a reason.
+
+## Prerequisites
+
+- .NET 6.0 SDK or later
+- Visual Studio 2022 or later (recommended for development)
+- SQL Server (LocalDB or SQL Express for development)
+
+## Setup
+
+1. **Clone the repository**:
+
+2. **Navigate to the project directory**:
+
+3. **Restore dependencies**:
+
+4. **Update the database**:
+
+5. **Run the application**:
+
+
+## Configuration
+
+Ensure that the `appsettings.json` file contains the correct connection string for your SQL Server instance:
+
 
 ## Usage
 
