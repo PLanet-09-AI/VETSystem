@@ -36,9 +36,8 @@ ControllerBase (for API applications): If your application is a Web API used for
 Example: VetAppointment API Controller
 If you are creating a Web API to manage veterinary appointments, you would start by creating a controller that interacts with the database using Entity Framework. Here’s a basic example of what this controller might look like:
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+
+
 using System.Threading.Tasks;
 using YourNamespace.Data;  // Adjust the namespace to where your DbContext is located
 using YourNamespace.Models; // Adjust the namespace to where your VetAppointment model is located
@@ -50,7 +49,6 @@ namespace YourNamespace.Controllers
     public class VetAppointmentsController : ControllerBase
     {
         private readonly YourDbContext _context;
-
         public VetAppointmentsController(YourDbContext context)
         {
             _context = context;
