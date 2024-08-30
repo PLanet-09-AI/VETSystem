@@ -1,27 +1,27 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
-/* Begin custom login styles */
+/* Custom login styles */
 .limiter {
     width: 100%;
     margin: 0 auto;
@@ -35,7 +35,7 @@ body {
     justify-content: center;
     align-items: center;
     padding: 15px;
-    background: #ffffff; /* White background */
+    background: #ffffff;
 }
 
 .wrap-login100 {
@@ -43,12 +43,9 @@ body {
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    padding: 40px 40px 30px; /* Reduced padding to make the card smaller */
+    padding: 40px 40px 30px;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .1);
 }
-
-/* Make sure there are no other background settings that could change the appearance */
-
 
 .login100-form {
     width: 100%;
@@ -56,27 +53,27 @@ body {
 
 .login100-form-title {
     display: block;
-    font-size: 24px; /* Slightly smaller title font size */
+    font-size: 24px;
     color: #333;
     line-height: 1.2;
     text-align: center;
-    margin-bottom: 20px; /* Adjusted spacing below title */
+    margin-bottom: 20px;
 }
 
 .wrap-input100 {
     width: 100%;
     position: relative;
     border-bottom: 2px solid #adadad;
-    margin-bottom: 20px; /* Reduced margin between inputs */
+    margin-bottom: 20px;
 }
 
 .input100 {
-    font-size: 14px; /* Slightly smaller input font size */
+    font-size: 14px;
     color: #555;
     line-height: 1.2;
     display: block;
     width: 100%;
-    height: 40px; /* Reduced input height */
+    height: 40px;
     background: transparent;
     padding: 0 5px;
 }
@@ -130,7 +127,7 @@ body {
 .container-login100-form-btn {
     display: flex;
     justify-content: center;
-    padding-top: 10px; /* Reduced padding above the button */
+    padding-top: 10px;
 }
 
 .wrap-login100-form-btn {
@@ -155,7 +152,7 @@ body {
 
 .login100-form-btn {
     font-size: 14px;
-    color: #fff; /* White text color */
+    color: #fff;
     line-height: 1.2;
     text-transform: uppercase;
     display: flex;
@@ -163,71 +160,40 @@ body {
     align-items: center;
     padding: 0 20px;
     width: 100%;
-    height: 45px; /* Button height */
-    background-color: #28a745; /* Green background color */
-    border: none; /* Remove any border */
-    border-radius: 25px; /* Round corners */
-    transition: background-color 0.3s ease; /* Smooth transition for background color */
+    height: 45px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
 }
 
-.login100-form-btn:hover {
-    background-color: #218838; /* Darker green on hover */
-    color: #fff; /* Ensure text stays white on hover */
-}
+    .login100-form-btn:hover {
+        background-color: #218838;
+        color: #fff;
+    }
 
-/* Removing the gradient background animation */
 .login100-form-bgbtn {
-    display: none; /* Hide the gradient background */
+    display: none;
 }
 
 .wrap-login100-form-btn:hover .login100-form-bgbtn {
-    left: 0; /* This will no longer have any effect as the background is hidden */
+    left: 0;
 }
 
-/* Additional styling */
 .text-danger {
     color: #dc3545;
 }
 
 .text-center {
     text-align: center;
-    margin-top: 10px; /* Reduced space above and below links */
+    margin-top: 10px;
 }
 
 .p-t-115 {
-    padding-top: 30px; /* Adjusted top padding to reduce overall card height */
+    padding-top: 30px;
 }
 
-/* Main CSS file additions */
-
-html {
-    font-size: 14px;
-}
-
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-
-body {
-    margin-bottom: 60px;
-}
-/* Main CSS file additions */
-
-/* ------------------------------------------------------------------------------------------------------------------------- */
-
-/* Begin custom styles for the welcome page */
-
+/* Custom styles for the welcome page */
 .video-background {
     position: fixed;
     top: 0;
@@ -241,7 +207,7 @@ body {
 #bgVideo {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensure the video covers the entire screen */
+    object-fit: cover;
     position: absolute;
     top: 0;
     left: 0;
@@ -251,7 +217,7 @@ body {
     position: relative;
     z-index: 1;
     padding: 50px 20px;
-    color: #fff; /* White text to stand out against the video */
+    color: #fff;
     text-align: center;
 }
 
@@ -266,33 +232,32 @@ body {
     margin-bottom: 40px;
 }
 
-/* ------------------------------------------------------------------------------------------------------------------------- */
-/* Styling the navbar */
+/* Navbar styling */
 .navbar {
-    background-color: white; /* Keep the navbar white */
-    padding: 10px 20px; /* Add padding to the navbar */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: white;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand img {
-    height: 40px; /* Adjust the logo size */
+    height: 40px;
 }
 
 .navbar-nav .nav-link {
-    color: #333; /* Darker color for the text */
-    font-weight: 500; /* Make the font slightly bolder */
-    margin-right: 20px; /* Add space between links */
-    position: relative; /* Position relative for the underline effect */
-    transition: color 0.3s ease; /* Smooth transition for hover effect */
+    color: #333;
+    font-weight: 500;
+    margin-right: 20px;
+    position: relative;
+    transition: color 0.3s ease;
 }
 
     .navbar-nav .nav-link:hover {
-        color: #4c51bf; /* Change color on hover */
-        text-decoration: none; /* Remove underline on hover */
+        color: #4c51bf;
+        text-decoration: none;
     }
 
     .navbar-nav .nav-link.active {
-        color: #4c51bf; /* Active state color */
+        color: #4c51bf;
     }
 
         .navbar-nav .nav-link.active::after,
@@ -301,29 +266,26 @@ body {
             display: block;
             width: 100%;
             height: 2px;
-            background-color: #4c51bf; /* Same color as the active link */
+            background-color: #4c51bf;
             position: absolute;
-            bottom: -5px; /* Position just below the text */
+            bottom: -5px;
             left: 0;
-            transition: width 0.3s ease; /* Smooth transition for underline */
+            transition: width 0.3s ease;
         }
 
     .navbar-nav .nav-link:hover::after {
-        width: 100%; /* Full underline on hover */
+        width: 100%;
     }
 
     .navbar-nav .nav-link.active::after {
-        width: 100%; /* Full underline on active link */
+        width: 100%;
     }
 
     .navbar-nav .nav-link::after {
-        width: 0; /* Start with no underline */
+        width: 0;
     }
 
-/* ------------------------------------------------------------------------------------------------------------------------- */
-
-
-
+/* Video container */
 .video-container {
     display: flex;
     justify-content: center;
@@ -337,7 +299,6 @@ body {
         border-radius: 10px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
-
 
 /* Modern Card Styling */
 .card {
@@ -398,6 +359,219 @@ hr {
     color: #6c757d !important;
 }
 
+/* Modern Table Styling */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
 
-/* End custom styles for the welcome page */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .table th,
+    .table td {
+        padding: 12px 20px;
+        text-align: left;
+        border-bottom: 1px solid #e5e5e5;
+        vertical-align: middle;
+    }
+
+    .table th {
+        background-color: #f8f9fa; /* Light grey background for headers */
+        font-weight: 600;
+        color: #333;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+    }
+
+    .table tr:last-child td {
+        border-bottom: none;
+    }
+
+.table-hover tbody tr:hover {
+    background-color: #f1f3f5; /* Slightly darker grey on hover */
+}
+
+.text-primary {
+    color: #4c51bf;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+    .text-primary:hover {
+        color: #3742fa;
+    }
+
+/* Adjust padding for the action buttons */
+.text-end {
+    text-align: right;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #4c51bf; /* Tailwind's indigo color */
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-action:hover {
+        background-color: #3742fa; /* Darker shade on hover */
+    }
+
+    .btn-action + .btn-action {
+        margin-left: 10px; /* Space between multiple action buttons */
+    }
+
+/* Add User button styling */
+.btn-add-user {
+    background-color: #4c51bf; /* Tailwind's indigo color */
+    border-color: #4c51bf;
+    color: #fff;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-add-user:hover {
+        background-color: #3742fa;
+        border-color: #3742fa;
+    }
+
+/*---------------------------------------------------------------------break-----------------------------------------------------------------------------------------------*/
+
+/* Privacy Policy Page Styles */
+
+.privacy-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+    .privacy-container h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .privacy-container p.lead {
+        font-size: 1.25rem;
+        font-weight: 300;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .privacy-container ul.privacy-list {
+        list-style: disc;
+        padding-left: 20px;
+    }
+
+        .privacy-container ul.privacy-list li {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #555;
+        }
+
+.image-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 15px;
+}
+
+    .image-gallery img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    .privacy-container h1 {
+        font-size: 2rem;
+    }
+
+    .privacy-container p.lead {
+        font-size: 1.1rem;
+    }
+
+    .image-gallery {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mission Section Styles */
+.mission-container {
+    padding: 60px 20px; /* Increase padding for better spacing */
+    background-color: #f8f9fa; /* Light background to distinguish the section */
+    border-top: 1px solid #e5e5e5;
+    overflow: hidden; /* Ensure no content is cut off */
+}
+
+.mission-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.2; /* Adjust line-height for better readability */
+}
+
+.mission-container p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-family: Arial, sans-serif; /* Ensure consistency with existing font */
+    text-align: justify; /* Justify the text for uniform appearance */
+}
+
+.stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #4c51bf; /* Tailwind's indigo color */
+}
+
+.stat-description {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .mission-title {
+        font-size: 2rem;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+    }
+}
+
 

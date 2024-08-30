@@ -51,7 +51,7 @@ namespace BestReg.Controllers
             };
 
             return View("CheckInConfirmation", viewModel);
-        }
+            }
 
 
         // This action displays the QR code scanner interface, restricted to "BusDriver" and "SchoolSecurity" roles
