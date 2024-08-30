@@ -29,11 +29,12 @@ namespace BestReg.Data
         {
             var roles = new[]
             {
-                "Admin",
-                "SchoolSecurity",
-                "Parent",
-                "Student"
-            };
+        "Admin",
+        "SchoolSecurity",
+        "BusDriver",
+        "Student",
+        "Parent"
+    };
 
             foreach (var roleName in roles)
             {
@@ -43,15 +44,14 @@ namespace BestReg.Data
                     var result = await roleManager.CreateAsync(role);
                     if (!result.Succeeded)
                     {
-                        // Log error messages using your logging framework
                         Console.WriteLine($"Error creating role {roleName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                     }
                 }
             }
 
-            // Optionally log success message
             Console.WriteLine("Roles seeded successfully.");
         }
+
 
         private static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -63,8 +63,9 @@ namespace BestReg.Data
                 FirstName = "Admin",
                 LastName = "User",
                 IDNumber = "123456789012",
-                  LockoutEnabled = false,  // Ensure the account is not locked out
-                EmailConfirmed = true // Skip email confirmation for admin
+                LockoutEnabled = false,  // Ensure the account is not locked out
+                EmailConfirmed = true, // Skip email confirmation for admin
+                QrCodeBase64 = null
             };
 
             var result = await userManager.CreateAsync(adminUser, "Admin@1234");

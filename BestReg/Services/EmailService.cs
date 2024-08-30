@@ -1,21 +1,21 @@
-﻿using MimeKit;
-using MailKit.Net.Smtp;
-using System.IO;
-using System.Text.Encodings.Web;
-using MailKit.Security;
-using Microsoft.Extensions.Configuration;
+﻿using System.IO;
+using System.Text;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Net.Mail;
+using System.Net;
 using System.Threading.Tasks;
 using ZXing;
 using ZXing.Common;
 using ZXing.QrCode;
-using System.Drawing;
-using System.Drawing.Imaging;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Text.Encodings.Web;
 
 public interface IEmailService
 {
-    Task SendConfirmationEmailAsync(string email, string callbackUrl);
-    Task SendQrCodeEmailAsync(string email, string qrCodeBase64);
+    Task<bool> SendConfirmationEmailAsync(string email, string callbackUrl);
+    Task<bool> SendQrCodeEmailAsync(string email, string qrCodeBase64);
     byte[] GenerateQrCode(string text);
     byte[] GenerateBarcode(string text);
 }
@@ -31,98 +31,48 @@ public class EmailService : IEmailService
         _logger = logger;
     }
 
-    public async Task SendConfirmationEmailAsync(string email, string callbackUrl)
+    private async Task<bool> SendEmailAsync(string email, string subject, string body)
     {
-        var smtpSettings = _configuration.GetSection("Smtp");
-        string smtpServer = smtpSettings["Server"];
-        string portString = smtpSettings["Port"];
-        string userName = smtpSettings["UserName"];
-        string password = smtpSettings["Password"];
-
-        if (string.IsNullOrEmpty(smtpServer) || string.IsNullOrEmpty(portString) || string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
-        {
-            _logger.LogError("SMTP settings are not properly configured.");
-            throw new ArgumentNullException("SMTP settings are not properly configured.");
-        }
-
-        if (!int.TryParse(portString, out int port))
-        {
-            _logger.LogError("Invalid SMTP port number.");
-            throw new ArgumentException("Invalid SMTP port number.");
-        }
-
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Admin", userName));
-        message.To.Add(new MailboxAddress(string.Empty, email));
-        message.Subject = "Confirm your email";
-
-        message.Body = new TextPart("html")
-        {
-            Text = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>."
-        };
-
         try
         {
-            using (var client = new SmtpClient())
-            {
-                await client.ConnectAsync(smtpServer, port, SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(userName, password);
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
-            }
+            MailMessage message = new MailMessage();
+            SmtpClient smtpClient = new SmtpClient();
+            message.From = new MailAddress("dutengagement@outlook.com");
+            message.To.Add(email);
+            message.Subject = subject;
+            message.IsBodyHtml = true;
+            message.Body = body;
+
+            smtpClient.Port = 587;
+            smtpClient.Host = "smtp.outlook.com";
+            smtpClient.EnableSsl = true;
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.Credentials = new NetworkCredential("dutengagement@outlook.com", "Admin@Dut01");
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            smtpClient.Send(message);
+            return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred while sending the confirmation email.");
-            throw;
+            _logger.LogError(ex, "An error occurred while sending the email: {Message}", ex.Message);
+            return false;
         }
     }
 
-    public async Task SendQrCodeEmailAsync(string email, string qrCodeBase64)
+    public async Task<bool> SendConfirmationEmailAsync(string email, string callbackUrl)
     {
-        var smtpSettings = _configuration.GetSection("Smtp");
-        string smtpServer = smtpSettings["Server"];
-        string portString = smtpSettings["Port"];
-        string userName = smtpSettings["UserName"];
-        string password = smtpSettings["Password"];
+        string subject = "Confirm your email";
+        string body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.";
 
-        if (string.IsNullOrEmpty(smtpServer) || string.IsNullOrEmpty(portString) || string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
-        {
-            _logger.LogError("SMTP settings are not properly configured.");
-            throw new ArgumentNullException("SMTP settings are not properly configured.");
-        }
+        return await SendEmailAsync(email, subject, body);
+    }
 
-        if (!int.TryParse(portString, out int port))
-        {
-            _logger.LogError("Invalid SMTP port number.");
-            throw new ArgumentException("Invalid SMTP port number.");
-        }
+    public async Task<bool> SendQrCodeEmailAsync(string email, string qrCodeBase64)
+    {
+        string subject = "Your QR Code";
+        string body = $"<p>Your QR code is below:</p><img src='data:image/png;base64,{qrCodeBase64}' alt='QR Code' />";
 
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Admin", userName));
-        message.To.Add(new MailboxAddress(string.Empty, email));
-        message.Subject = "Your QR Code";
-
-        message.Body = new TextPart("html")
-        {
-            Text = $"<p>Your QR code is below:</p><img src='data:image/png;base64,{qrCodeBase64}' alt='QR Code' />"
-        };
-
-        try
-        {
-            using (var client = new SmtpClient())
-            {
-                await client.ConnectAsync(smtpServer, port, SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(userName, password);
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while sending the QR code email.");
-            throw;
-        }
+        return await SendEmailAsync(email, subject, body);
     }
 
     public byte[] GenerateQrCode(string text)

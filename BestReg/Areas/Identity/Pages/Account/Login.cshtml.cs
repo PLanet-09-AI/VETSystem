@@ -15,10 +15,12 @@ namespace BestReg.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -67,19 +69,32 @@ namespace BestReg.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    // Fetch the user by email
-                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
-                    if (user != null && await _signInManager.UserManager.IsInRoleAsync(user, "Admin"))
+                    var user = await _userManager.FindByNameAsync(Input.Email);
+                    if (user != null)
                     {
-                        // Redirect to Admin/Index if the user is in the Admin role
-                        return LocalRedirect(Url.Content("~/Admin/Index"));
+                        var roles = await _userManager.GetRolesAsync(user);
+
+                        if (roles.Contains("Student") || roles.Contains("Parent"))
+                        {
+                            return RedirectToAction("Index", "Parent");
+                        }
+                        if (roles.Contains("Admin"))
+                        {
+                            return RedirectToAction("Index", "Admin");
+                        }
+                        if (roles.Contains("SchoolSecurity"))
+                        {
+                            return RedirectToAction("Index", "SchoolAuthority");
+                        }
+                        if (roles.Contains("BusDriver"))
+                        {
+                            return RedirectToAction("Index", "BusDriver");
+                        }
                     }
 
                     _logger.LogInformation("User logged in.");
@@ -104,6 +119,5 @@ namespace BestReg.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
-
     }
 }

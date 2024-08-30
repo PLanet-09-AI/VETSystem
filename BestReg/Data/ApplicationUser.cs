@@ -7,6 +7,9 @@ namespace BestReg.Data
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string IDNumber { get; set; }
- 
+
+        public string? QrCodeBase64 { get; set; }
+     
+
     }
 }
