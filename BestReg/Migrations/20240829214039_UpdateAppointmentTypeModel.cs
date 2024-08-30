@@ -5,7 +5,7 @@
 namespace BestReg.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateVetAppointmentId : Migration
+    public partial class UpdateAppointmentTypeModel : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

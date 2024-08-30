@@ -5,13 +5,13 @@
 namespace BestReg.Migrations
 {
     /// <inheritdoc />
-    public partial class isBooked : Migration
+    public partial class AddIsAcceptedToVetAppointment : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "IsBooked",
+                name: "IsAccepted",
                 table: "VetAppointments",
                 type: "bit",
                 nullable: false,
@@ -22,7 +22,7 @@ namespace BestReg.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "IsBooked",
+                name: "IsAccepted",
                 table: "VetAppointments");
         }
     }

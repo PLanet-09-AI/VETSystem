@@ -1,0 +1,73 @@
+﻿@model IEnumerable<BestReg.Data.VetAppointment>
+
+@{
+    ViewData["Title"] = "Pending Appointments";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Appointment Type</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.StartTime.ToString("g")</td>
+                <td>@item.EndTime.ToString("g")</td>
+                <td>@item.AppointmentType</td>
+                <td>
+                    <form asp-action="AcceptAppointment" asp-route-id="@item.Id" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-success">Accept</button>
+                    </form>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal@(item.Id)">
+                        Decline
+                    </button>
+                </td>
+            </tr>
+
+            <!-- Decline Modal -->
+            <div class="modal fade" id="declineModal@(item.Id)" tabindex="-1" role="dialog" aria-labelledby="declineModalLabel@(item.Id)" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="declineModalLabel@(item.Id)">Decline Appointment</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form asp-action="DeclineAppointment" asp-route-id="@item.Id" method="post">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="reason">Reason for declining:</label>
+                                    <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Decline Appointment</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </tbody>
+</table>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('[data-toggle="modal"]').tooltip()
+        });
+    </script>
+}

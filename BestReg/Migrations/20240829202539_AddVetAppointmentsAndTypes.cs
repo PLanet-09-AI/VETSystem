@@ -6,11 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BestReg.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateVetAppointment : Migration
+    public partial class AddVetAppointmentsAndTypes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AppointmentTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppointmentTypes", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -62,8 +75,13 @@ namespace BestReg.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsBooked = table.Column<bool>(type: "bit", nullable: false),
                     AppointmentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VetAdminId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    VetAdminId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Canceled = table.Column<bool>(type: "bit", nullable: false),
+                    DeclineReason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeclined = table.Column<bool>(type: "bit", nullable: false),
+                    IsNotified = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,6 +105,27 @@ namespace BestReg.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Appointments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AppointmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    VetAdminId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Appointments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Appointments_AspNetUsers_VetAdminId",
+                        column: x => x.VetAdminId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -177,6 +216,11 @@ namespace BestReg.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Appointments_VetAdminId",
+                table: "Appointments",
+                column: "VetAdminId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
@@ -219,6 +263,12 @@ namespace BestReg.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Appointments");
+
+            migrationBuilder.DropTable(
+                name: "AppointmentTypes");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

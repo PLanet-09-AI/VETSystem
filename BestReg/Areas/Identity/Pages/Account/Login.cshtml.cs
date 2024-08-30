@@ -101,7 +101,7 @@ namespace BestReg.Areas.Identity.Pages.Account
                         }
                         if (roles.Contains("VetAdmin"))
                         {
-                            return RedirectToAction("Index", "VetAdmin");
+                            return RedirectToAction("Index", "VetAppointments");
                         }
                         if (roles.Contains("ExternalSupplier"))
                         {

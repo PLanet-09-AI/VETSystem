@@ -7,6 +7,7 @@ namespace BestReg.Data
     {
         public DbSet<VetAppointment> VetAppointments { get; set; }
         public DbSet<AppointmentType> AppointmentTypes { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }

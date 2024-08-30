@@ -1,39 +1,85 @@
 ﻿@model IEnumerable<BestReg.Data.VetAppointment>
 
-<h2>Notifications</h2>
-
-@if (!Model.Any())
-{
-    <p>No new notifications.</p>
+@{
+    ViewData["Title"] = "Notifications";
 }
-else
-{
-    <table class="table">
-        <thead>
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Appointment Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
             <tr>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Appointment Type</th>
-                <th>Decline Reason</th>
-                <th>Actions</th>
+                <td>@item.StartTime.ToString("g")</td>
+                <td>@item.EndTime.ToString("g")</td>
+                <td>@item.AppointmentType</td>
+                <td>
+                    @if (item.IsAccepted)
+                    {
+                        <span class="text-success">Accepted</span>
+                    }
+                    else if (item.IsDeclined)
+                    {
+                        <span class="text-danger">Declined</span>
+                    }
+                    else
+                    {
+                        <span class="text-warning">Pending</span>
+                    }
+                </td>
+                <td>
+                    @if (item.IsDeclined)
+                    {
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#declineReasonModal@(item.Id)">
+                            View Decline Reason
+                        </button>
+                    }
+                    <form asp-action="MarkAsRead" asp-route-appointmentId="@item.Id" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-primary">Mark as Read</button>
+                    </form>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var appointment in Model)
+
+            @if (item.IsDeclined)
             {
-                <tr>
-                    <td>@appointment.StartTime.ToString("MM/dd/yyyy HH:mm")</td>
-                    <td>@appointment.EndTime.ToString("HH:mm")</td>
-                    <td>@appointment.AppointmentType</td>
-                    <td>@appointment.DeclineReason</td>
-                    <td>
-                        <form asp-action="MarkAsRead" method="post">
-                            <input type="hidden" name="appointmentId" value="@appointment.Id" />
-                            <button type="submit" class="btn btn-success">Mark as Read</button>
-                        </form>
-                    </td>
-                </tr>
+                <!-- Decline Reason Modal -->
+                <div class="modal fade" id="declineReasonModal@(item.Id)" tabindex="-1" role="dialog" aria-labelledby="declineReasonModalLabel@(item.Id)" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="declineReasonModalLabel@(item.Id)">Decline Reason</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>@item.DeclineReason</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('[data-toggle="modal"]').tooltip()
+        })
+    </script>
 }

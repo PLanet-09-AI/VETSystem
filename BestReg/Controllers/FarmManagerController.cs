@@ -99,11 +99,12 @@ namespace BestReg.Controllers
             return RedirectToAction(nameof(Notifications));
         }
 
+
         public async Task<IActionResult> Notifications()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var notifications = await _context.VetAppointments
-                .Where(a => a.IsNotified == false && a.IsDeclined)
+                .Where(a => a.IsNotified == false && (a.IsDeclined || a.IsAccepted))
                 .ToListAsync();
 
             return View(notifications);

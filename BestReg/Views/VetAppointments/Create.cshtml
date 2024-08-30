@@ -1,0 +1,98 @@
+﻿@model BestReg.Data.VetAppointment
+
+@{
+    ViewData["Title"] = "Create Appointment Slot";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="createAppointmentForm" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="StartTime" class="control-label"></label>
+                <input asp-for="StartTime" class="form-control" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndTime" class="control-label"></label>
+                <input asp-for="EndTime" class="form-control" />
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AppointmentType" class="control-label"></label>
+                <select asp-for="AppointmentType" class="form-control" asp-items="ViewBag.AppointmentTypes"></select>
+                <span asp-validation-for="AppointmentType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VetAdminId" class="control-label"></label>
+                <input asp-for="VetAdminId" class="form-control" />
+                <span asp-validation-for="VetAdminId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeclineReason" class="control-label"></label>
+                <textarea asp-for="DeclineReason" class="form-control"></textarea>
+                <span asp-validation-for="DeclineReason" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="appointmentList">
+    <!-- This div will be updated with the new appointment list -->
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.getElementById('createAppointmentForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var form = e.target;
+            var formData = new FormData(form);
+
+            axios.post(form.action, formData, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(function (response) {
+                    if (response.data.success) {
+                        // Clear the form
+                        form.reset();
+
+                        // Show a success message
+                        alert('Appointment created successfully!');
+
+                        // Optionally, update the appointment list or reload the page
+                        // location.reload();
+                    } else {
+                        // Show error messages
+                        var errorMessage = 'Error creating appointment:\n';
+                        if (response.data.errors && response.data.errors.length > 0) {
+                            errorMessage += response.data.errors.join('\n');
+                        } else {
+                            errorMessage += response.data.message;
+                        }
+                        alert(errorMessage);
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while creating the appointment.');
+                });
+        });
+    </script>
+}

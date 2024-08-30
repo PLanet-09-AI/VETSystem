@@ -1,31 +1,32 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-namespace BestReg.Data
 
+namespace BestReg.Data
 {
     public class VetAppointment
     {
-        public int Id { get; set; }  // Auto-incremented primary key
+        public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Start Time")]
         public DateTime StartTime { get; set; }
 
         [Required]
+        [Display(Name = "End Time")]
         public DateTime EndTime { get; set; }
 
-        public bool IsBooked { get; set; }
+        [Required]
+        [Display(Name = "Appointment Type")]
+        public string AppointmentType { get; set; }
 
         [Required]
-        public string AppointmentType { get; set; } // e.g., Vaccination, Nutrition, Treatment
+        public string VetAdminId { get; set; }
 
-        [Required]
-        public string VetAdminId { get; set; } // ID of the Vet Admin who created this slot
-
-        public bool Canceled { get; set; } // Property to mark the appointment as canceled
-
-        public string DeclineReason { get; set; }  // Field to store the reason for declining
-        public bool IsDeclined { get; set; }
-        public bool IsNotified { get; set; }
-
+        public bool IsBooked { get; set; } = false;
+        public bool Canceled { get; set; } = false;
+        public string? DeclineReason { get; set; }
+        public bool IsAccepted { get; set; }
+        public bool IsDeclined { get; set; } = false;
+        public bool IsNotified { get; set; } = false;
     }
 }

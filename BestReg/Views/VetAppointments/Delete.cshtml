@@ -35,6 +35,36 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.VetAdminId)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsBooked)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsBooked)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Canceled)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Canceled)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DeclineReason)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DeclineReason)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsDeclined)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsDeclined)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsNotified)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsNotified)
+        </dd>
     </dl>
     
     <form asp-action="Delete">

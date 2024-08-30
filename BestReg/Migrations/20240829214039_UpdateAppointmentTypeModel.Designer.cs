@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BestReg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240829034152_Init5")]
-    partial class Init5
+    [Migration("20240829214039_UpdateAppointmentTypeModel")]
+    partial class UpdateAppointmentTypeModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,6 +105,32 @@ namespace BestReg.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("BestReg.Data.Appointment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VetAdminId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VetAdminId");
+
+                    b.ToTable("Appointments");
+                });
+
             modelBuilder.Entity("BestReg.Data.AppointmentType", b =>
                 {
                     b.Property<int>("Id")
@@ -137,8 +163,21 @@ namespace BestReg.Migrations
                     b.Property<bool>("Canceled")
                         .HasColumnType("bit");
 
+                    b.Property<string>("DeclineReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsBooked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeclined")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsNotified")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
@@ -287,6 +326,17 @@ namespace BestReg.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("BestReg.Data.Appointment", b =>
+                {
+                    b.HasOne("BestReg.Data.ApplicationUser", "VetAdmin")
+                        .WithMany()
+                        .HasForeignKey("VetAdminId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("VetAdmin");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
