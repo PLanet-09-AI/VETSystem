@@ -1,0 +1,30 @@
+﻿@model List<BestReg.Data.NutritionStock>
+
+<h2>Request Nutrition Restock</h2>
+
+<form asp-action="SubmitRestockRequest">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Food Type</th>
+                <th>Current Quantity</th>
+                <th>Supplier</th>
+                <th>Request Restock</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FoodType</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Supplier</td>
+                    <td>
+                        <input type="checkbox" name="stockIds" value="@item.Id" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Submit Restock Request</button>
+</form>

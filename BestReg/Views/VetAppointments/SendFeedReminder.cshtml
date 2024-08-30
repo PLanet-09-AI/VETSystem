@@ -1,0 +1,11 @@
+﻿@model BestReg.Data.Animal
+
+<h2>Send Feed Reminder</h2>
+
+<p>Are you sure you want to send a feed reminder for @Model.Species (ID: @Model.Id)?</p>
+
+<form asp-action="SendFeedReminder">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-primary">Send Reminder</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

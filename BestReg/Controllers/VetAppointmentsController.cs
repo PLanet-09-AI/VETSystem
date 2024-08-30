@@ -224,6 +224,180 @@ namespace BestReg.Controllers
         {
             return _context.VetAppointments.Any(e => e.Id == id);
         }
+
+        public IActionResult DiagnosisCheckup(int animalId)
+        {
+            var animal = _context.Animals.Find(animalId);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+            return View(new DiagnosisRecord { AnimalId = animalId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DiagnosisCheckup(DiagnosisRecord record)
+        {
+            if (ModelState.IsValid)
+            {
+                record.CheckupDate = DateTime.Now;
+                _context.DiagnosisRecords.Add(record);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("ScheduleVaccination", new { animalId = record.AnimalId });
+            }
+            return View(record);
+        }
+
+        public IActionResult ScheduleVaccination(int animalId)
+        {
+            var animal = _context.Animals.Find(animalId);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+            return View(new VaccinationSchedule { AnimalId = animalId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ScheduleVaccination(VaccinationSchedule schedule)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.VaccinationSchedules.Add(schedule);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(schedule);
+        }
+
+        public async Task<IActionResult> RescheduleAppointment(int appointmentId)
+        {
+            var appointment = await _context.VetAppointments.FindAsync(appointmentId);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+            return View(appointment);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RescheduleAppointment(int id, DateTime newDateTime)
+        {
+            var appointment = await _context.VetAppointments.FindAsync(id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            appointment.StartTime = newDateTime;
+            appointment.EndTime = newDateTime.AddHours(1); // Assuming 1-hour duration
+            _context.Update(appointment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        
+
+        // Record Feeding Activity
+        public IActionResult RecordFeeding(int animalId)
+        {
+            var animal = _context.Animals.Find(animalId);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+            return View(new FeedingPlan { AnimalId = animalId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RecordFeeding(FeedingPlan feedingPlan)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.FeedingPlans.Add(feedingPlan);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(feedingPlan);
+        }
+
+        // Request Nutrition Restock
+        public IActionResult RequestRestock()
+        {
+            var lowStockItems = _context.NutritionStocks.Where(ns => ns.Quantity < 10).ToList();
+            return View(lowStockItems);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitRestockRequest(List<int> stockIds)
+        {
+            // TODO: Implement logic to create restock requests for selected items
+            return RedirectToAction("Index");
+        }
+
+        // Track Medical Records
+        public async Task<IActionResult> MedicalRecords(int animalId)
+        {
+            var records = await _context.MedicalRecords
+                .Where(mr => mr.AnimalId == animalId)
+                .OrderByDescending(mr => mr.RecordDate)
+                .ToListAsync();
+            return View(records);
+        }
+
+     
+        [HttpPost]
+        public async Task<IActionResult> ScheduleEvent(Event eventModel)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Events.Add(eventModel);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(eventModel);
+        }
+
+        public IActionResult SendFeedReminder(int id)
+        {
+            var animal = _context.Animals.Find(id);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+            return View(animal);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SendFeedReminder(int id, bool confirm)
+        {
+            if (confirm)
+            {
+                // TODO: Implement email sending logic here
+                TempData["Message"] = "Feed reminder sent successfully.";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> CostAnalysis()
+        {
+            // This is a placeholder. You'll need to implement the actual cost analysis logic.
+            var totalAppointments = await _context.VetAppointments.CountAsync();
+            var totalVaccinations = await _context.VaccinationSchedules.CountAsync();
+            var totalFeedings = await _context.FeedingPlans.CountAsync();
+
+            var viewModel = new CostAnalysisViewModel
+            {
+                TotalAppointments = totalAppointments,
+                TotalVaccinations = totalVaccinations,
+                TotalFeedings = totalFeedings
+                // Add more data as needed
+            };
+
+            return View(viewModel);
+        }
         //// GET: VetAppointments/DiagnosisCheckup/5
         //public async Task<IActionResult> DiagnosisCheckup(int? id)
         //{

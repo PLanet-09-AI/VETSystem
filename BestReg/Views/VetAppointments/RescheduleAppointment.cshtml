@@ -1,0 +1,13 @@
+﻿@model BestReg.Data.VetAppointment
+
+<h2>Reschedule Appointment</h2>
+
+<form asp-action="RescheduleAppointment">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="StartTime">New Appointment Time</label>
+        <input asp-for="StartTime" class="form-control" type="datetime-local" />
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Reschedule</button>
+</form>
