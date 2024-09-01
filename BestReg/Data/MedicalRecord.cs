@@ -9,5 +9,8 @@
         public string Diagnosis { get; set; }
         public Animal Animal { get; set; }
 
+        // Additional fields if needed
+        public string HealthMetrics { get; set; }
+
     }
 }

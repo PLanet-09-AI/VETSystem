@@ -248,6 +248,7 @@ namespace BestReg.Controllers
             return View(record);
         }
 
+
         public IActionResult ScheduleVaccination(int animalId)
         {
             var animal = _context.Animals.Find(animalId);
@@ -397,6 +398,21 @@ namespace BestReg.Controllers
             };
 
             return View(viewModel);
+        }
+
+        public IActionResult SearchAnimal()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchAnimal(string searchTerm)
+        {
+            var animals = await _context.Animals
+                .Where(a => a.Name.Contains(searchTerm) || a.Id.ToString() == searchTerm)
+                .ToListAsync();
+
+            return View("SearchResults", animals);
         }
         //// GET: VetAppointments/DiagnosisCheckup/5
         //public async Task<IActionResult> DiagnosisCheckup(int? id)

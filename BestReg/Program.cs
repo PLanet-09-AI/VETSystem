@@ -1,8 +1,7 @@
 using BestReg.Data;
-using BestReg.Controllers;
+using BestReg.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,8 +28,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 // Register the EmailService with the dependency injection container
 builder.Services.AddTransient<IEmailService, EmailService>();
 
-// Register VetAdminController
-
+// Register the AnimalService with the DI container
+builder.Services.AddScoped<IAnimalService, AnimalService>();
 
 // Add services to the container
 builder.Services.AddControllersWithViews();

@@ -5,29 +5,29 @@
 <form asp-action="DiagnosisCheckup">
     <input type="hidden" asp-for="AnimalId" />
     <div class="form-group">
-        <label asp-for="Age"></label>
+        <label asp-for="Age">Age</label>
         <input asp-for="Age" class="form-control" />
         <span asp-validation-for="Age" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Height"></label>
+        <label asp-for="Height">Height (cm)</label>
         <input asp-for="Height" class="form-control" />
         <span asp-validation-for="Height" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Weight"></label>
+        <label asp-for="Weight">Weight (kg)</label>
         <input asp-for="Weight" class="form-control" />
         <span asp-validation-for="Weight" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="IllnessStatus"></label>
-        <input asp-for="IllnessStatus" class="form-control" />
+        <label asp-for="IllnessStatus">Illness Status</label>
+        <textarea asp-for="IllnessStatus" class="form-control"></textarea>
         <span asp-validation-for="IllnessStatus" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="TreatmentStatus"></label>
-        <input asp-for="TreatmentStatus" class="form-control" />
+        <label asp-for="TreatmentStatus">Treatment Status</label>
+        <textarea asp-for="TreatmentStatus" class="form-control"></textarea>
         <span asp-validation-for="TreatmentStatus" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Save and Schedule Vaccination</button>
+    <button type="submit" class="btn btn-primary">Submit Diagnosis</button>
 </form>

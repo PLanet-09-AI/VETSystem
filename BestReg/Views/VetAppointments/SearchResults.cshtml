@@ -1,0 +1,25 @@
+﻿@model List<BestReg.Data.Animal>
+
+<h2>Search Results</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Animal ID</th>
+            <th>Name</th>
+            <th>Species</th>
+            <th>Date of Birth</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var animal in Model)
+        {
+            <tr>
+                <td>@animal.Id</td>
+                <td>@animal.Name</td>
+                <td>@animal.Species</td>
+                <td>@animal.DateOfBirth.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

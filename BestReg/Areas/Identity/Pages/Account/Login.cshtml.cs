@@ -97,7 +97,7 @@ namespace BestReg.Areas.Identity.Pages.Account
                         }
                         if (roles.Contains("FarmWorker"))
                         {
-                            return RedirectToAction("Tasks", "FarmWorker");
+                            return RedirectToAction("Index", "Animals");
                         }
                         if (roles.Contains("VetAdmin"))
                         {
