@@ -10,7 +10,7 @@ using BestReg.Models;
 
 namespace BestReg.Controllers
 {
-    [Authorize(Roles = "VetAdmin")]
+    [Authorize(Roles = "VetAdmin,Veterinarian")]
     public class VetAppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
