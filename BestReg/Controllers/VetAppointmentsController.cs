@@ -10,7 +10,7 @@ using BestReg.Models;
 
 namespace BestReg.Controllers
 {
-    [Authorize(Roles = "VetAdmin")]
+    [Authorize(Roles = "VetAdmin,Veterinarian")]
     public class VetAppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -48,7 +48,7 @@ namespace BestReg.Controllers
                 vetAppointment.Canceled = false;
                 vetAppointment.IsDeclined = false;
                 vetAppointment.IsNotified = false;
-
+                vetAppointment.AnimalId = 0;
                 _context.Add(vetAppointment);
                 await _context.SaveChangesAsync();
 

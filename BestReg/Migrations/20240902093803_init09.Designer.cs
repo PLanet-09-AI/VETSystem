@@ -4,6 +4,7 @@ using BestReg.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BestReg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240902093803_init09")]
+    partial class init09
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,6 +37,7 @@ namespace BestReg.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Species")
@@ -281,7 +285,7 @@ namespace BestReg.Migrations
                     b.ToTable("HealthMetrics");
                 });
 
-            modelBuilder.Entity("BestReg.Data.InventoryItem", b =>
+            modelBuilder.Entity("BestReg.Data.IllnessTreatmentInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -289,19 +293,17 @@ namespace BestReg.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Diagnosis")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("PricePerUnit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("QuantityInStock")
-                        .HasColumnType("int");
+                    b.Property<string>("Treatment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("InventoryItems");
+                    b.ToTable("IllnessTreatmentInfo");
                 });
 
             modelBuilder.Entity("BestReg.Data.MedicalRecord", b =>
@@ -370,52 +372,6 @@ namespace BestReg.Migrations
                     b.ToTable("NutritionStocks");
                 });
 
-            modelBuilder.Entity("BestReg.Data.OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QuantityOrdered")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SupplierOrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("SupplierOrderId");
-
-                    b.ToTable("OrderItems");
-                });
-
-            modelBuilder.Entity("BestReg.Data.SupplierOrder", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SupplierName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SupplierOrders");
-                });
-
             modelBuilder.Entity("BestReg.Data.VaccinationSchedule", b =>
                 {
                     b.Property<int>("Id")
@@ -448,9 +404,6 @@ namespace BestReg.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AnimalId")
-                        .HasColumnType("int");
 
                     b.Property<string>("AppointmentType")
                         .IsRequired()
@@ -686,21 +639,6 @@ namespace BestReg.Migrations
                     b.Navigation("IllnessTreatmentInfo");
                 });
 
-            modelBuilder.Entity("BestReg.Data.OrderItem", b =>
-                {
-                    b.HasOne("BestReg.Data.InventoryItem", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BestReg.Data.SupplierOrder", null)
-                        .WithMany("Items")
-                        .HasForeignKey("SupplierOrderId");
-
-                    b.Navigation("Item");
-                });
-
             modelBuilder.Entity("BestReg.Data.VaccinationSchedule", b =>
                 {
                     b.HasOne("BestReg.Data.Animal", "Animal")
@@ -772,11 +710,6 @@ namespace BestReg.Migrations
                     b.Navigation("MedicalRecords");
 
                     b.Navigation("VaccinationSchedules");
-                });
-
-            modelBuilder.Entity("BestReg.Data.SupplierOrder", b =>
-                {
-                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }
