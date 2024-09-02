@@ -1,0 +1,26 @@
+﻿@model IEnumerable<BestReg.Data.SupplierOrder>
+
+<h2>External Supplier Dashboard</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order Date</th>
+            <th>Supplier Name</th>
+            <th>Total Items Ordered</th>
+            <th>Total Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            decimal totalValue = order.Items.Sum(i => i.Item.PricePerUnit * i.QuantityOrdered);
+            <tr>
+                <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                <td>@order.SupplierName</td>
+                <td>@order.Items.Sum(i => i.QuantityOrdered)</td>
+                <td>@totalValue</td>
+            </tr>
+        }
+    </tbody>
+</table>
