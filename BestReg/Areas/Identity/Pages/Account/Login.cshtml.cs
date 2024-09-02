@@ -93,7 +93,7 @@ namespace BestReg.Areas.Identity.Pages.Account
                         }
                         if (roles.Contains("Veterinarian"))
                         {
-                            return RedirectToAction("Schedule", "Vet");
+                            return RedirectToAction("PendingAppointments", "VetAppointments");
                         }
                         if (roles.Contains("FarmWorker"))
                         {
@@ -105,7 +105,7 @@ namespace BestReg.Areas.Identity.Pages.Account
                         }
                         if (roles.Contains("ExternalSupplier"))
                         {
-                            return RedirectToAction("Orders", "Supplier");
+                            return RedirectToAction("Dashboard", "ExternalSupplier");
                         }
                     }
 
