@@ -21,6 +21,7 @@ namespace BestReg.Data
 
         [Required]
         public string VetAdminId { get; set; }
+        public int AnimalId { get; set; } // Add this property
 
         public bool IsBooked { get; set; } = false;
         public bool Canceled { get; set; } = false;
@@ -28,5 +29,8 @@ namespace BestReg.Data
         public bool IsAccepted { get; set; }
         public bool IsDeclined { get; set; } = false;
         public bool IsNotified { get; set; } = false;
+        // Navigation property to the Animal entity
+      
+
     }
 }

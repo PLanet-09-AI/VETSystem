@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BestReg.Data;
 using Microsoft.Extensions.Logging;
+using BestReg.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace BestReg.Controllers
 {
-
-
+    [Authorize(Roles = "FarmWorker,Veterinarian")]
     public class AnimalsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -37,36 +39,17 @@ namespace BestReg.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Species,DateOfBirth")] Animal animal)
+        public async Task<IActionResult> Create([Bind("Id,Name,Species,DateOfBirth,Status")] Animal animal)
         {
-            _logger.LogInformation("Create action called.");
-
             if (ModelState.IsValid)
             {
-                _logger.LogInformation("ModelState is valid. Adding animal to the database.");
-
-                try
-                {
-                    _context.Add(animal);
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation("Animal created successfully with ID: {AnimalId}", animal.Id);
-
-                    // Redirect to the Diagnosis page for the newly created animal
-                    return RedirectToAction("Index", "Animals", new { animalId = animal.Id });
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "An error occurred while creating the animal.");
-                }
+                _context.Add(animal);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                _logger.LogWarning("ModelState is invalid. Errors: {Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-            }
-
-            // If the model is not valid, redisplay the form with validation errors
             return View(animal);
         }
+
 
         // GET: Animals/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -85,11 +68,9 @@ namespace BestReg.Controllers
         }
 
         // POST: Animals/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,DateOfBirth")] Animal animal)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,DateOfBirth,Status")] Animal animal)
         {
             if (id != animal.Id)
             {
@@ -118,6 +99,7 @@ namespace BestReg.Controllers
             }
             return View(animal);
         }
+
 
         // GET: Animals/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -155,6 +137,115 @@ namespace BestReg.Controllers
         private bool AnimalExists(int id)
         {
             return _context.Animals.Any(e => e.Id == id);
+        }
+
+        // Method for the farm manager to book appointments with the animal added
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BookAppointment(BookAppointmentViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Use model.SelectedAnimalId to get the selected animal's ID
+                var animal = await _context.Animals.FindAsync(model.SelectedAnimalId);
+                if (animal == null)
+                {
+                    return NotFound();
+                }
+
+                // Create and save the appointment
+                var appointment = new VetAppointment
+                {
+                    AnimalId = model.SelectedAnimalId,
+                    AppointmentType = model.AppointmentType,
+                    StartTime = model.StartTime,
+                    EndTime = model.EndTime,
+                    VetAdminId = User.FindFirstValue(ClaimTypes.NameIdentifier), // Automatically set VetAdminId
+                    IsBooked = true,
+                    Canceled = false,
+                    IsDeclined = false,
+                    IsNotified = false
+                };
+
+                _context.VetAppointments.Add(appointment);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index"); // Redirect to a relevant page after booking
+            }
+
+            // If the model state is invalid, repopulate the Animals list and redisplay the form
+            model.Animals = await _context.Animals
+                .Select(a => new SelectListItem
+                {
+                    Value = a.Id.ToString(),
+                    Text = a.Name
+                })
+                .ToListAsync();
+
+            return View(model);
+        }
+
+        // GET: Animals/ConductCheckup/5
+        public async Task<IActionResult> ConductCheckup(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var animal = await _context.Animals.FindAsync(id);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+
+            var model = new ConductCheckupViewModel
+            {
+                AnimalId = animal.Id,
+                Animal = animal,
+                HealthMetrics = new HealthMetrics(),
+                TreatmentInfo = new IllnessTreatmentInfo()
+            };
+
+            return View(model);
+        }
+
+        // POST: Animals/ConductCheckup/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConductCheckup(ConductCheckupViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Fetch the animal from the database
+                var animal = await _context.Animals.FindAsync(model.AnimalId);
+                if (animal == null)
+                {
+                    return NotFound();
+                }
+
+                // Create a new MedicalRecord entry
+                var medicalRecord = new MedicalRecord
+                {
+                    AnimalId = model.AnimalId,
+                    Diagnosis = model.Diagnosis,
+                    Treatment = model.TreatmentInfo.Treatment,
+                    RecordDate = DateTime.Now,
+                    HealthMetrics = model.HealthMetrics,
+                    IllnessTreatmentInfo = model.TreatmentInfo,
+                    CheckupDate = DateTime.Now
+                };
+
+                // Add the medical record to the database
+                _context.MedicalRecords.Add(medicalRecord);
+                await _context.SaveChangesAsync();
+
+                // Return a JSON response for AJAX success handling
+                return Json(new { success = true, message = "Diagnosis submitted successfully!" });
+            }
+
+            // Return validation errors if the model state is invalid
+            return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
         }
     }
 }

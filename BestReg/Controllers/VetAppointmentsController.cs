@@ -48,7 +48,7 @@ namespace BestReg.Controllers
                 vetAppointment.Canceled = false;
                 vetAppointment.IsDeclined = false;
                 vetAppointment.IsNotified = false;
-
+                vetAppointment.AnimalId = 0;
                 _context.Add(vetAppointment);
                 await _context.SaveChangesAsync();
 
