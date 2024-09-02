@@ -1,0 +1,24 @@
+﻿@model IEnumerable<BestReg.Models.InventoryItem>
+
+<h2>Farm Manager Order Form</h2>
+
+<form asp-action="PlaceOrder">
+    <div class="form-group">
+        <label for="supplierName">Supplier Name:</label>
+        <input type="text" id="supplierName" name="supplierName" required>
+    </div>
+    <div class="form-group">
+        <label for="items">Select items to order:</label>
+        <select id="items" name="items" multiple required>
+            @foreach (var item in Model)
+            {
+                <option value="@item.Id">@item.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" min="1" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Place Order</button>
+</form>

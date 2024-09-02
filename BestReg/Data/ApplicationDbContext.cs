@@ -5,6 +5,9 @@ namespace BestReg.Data
 {
     public class ApplicationDbContext:IdentityDbContext<ApplicationUser>
     {
+        public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<SupplierOrder> SupplierOrders { get; set; }
         public DbSet<VetAppointment> VetAppointments { get; set; }
         public DbSet<AppointmentType> AppointmentTypes { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
@@ -15,6 +18,7 @@ namespace BestReg.Data
         public DbSet<NutritionStock> NutritionStocks { get; set; }
         public DbSet<MedicalRecord> MedicalRecords { get; set; }
         public DbSet<Event> Events { get; set; }
+  
 
         // If you have an Animal model, add it as well
         public DbSet<Animal> Animals { get; set; }
