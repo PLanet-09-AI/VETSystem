@@ -2,25 +2,34 @@
 
 <h2>External Supplier Dashboard</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Order Date</th>
-            <th>Supplier Name</th>
-            <th>Total Items Ordered</th>
-            <th>Total Value</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var order in Model)
-        {
-            decimal totalValue = order.Items.Sum(i => i.Item.PricePerUnit * i.QuantityOrdered);
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
             <tr>
-                <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
-                <td>@order.SupplierName</td>
-                <td>@order.Items.Sum(i => i.QuantityOrdered)</td>
-                <td>@totalValue</td>
+                <th>Order Date</th>
+                <th>Supplier Name</th>
+                <th>Total Items Ordered</th>
+                <th>Total Value</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                var items = order.Items ?? new List<OrderItem>(); // Ensure Items is not null
+                decimal totalValue = items.Sum(i => (i.Item?.PricePerUnit ?? 0) * i.QuantityOrdered); // Handle null Item and PricePerUnit
+
+                <tr>
+                    <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                    <td>@order.SupplierName</td>
+                    <td>@items.Sum(i => i.QuantityOrdered)</td>
+                    <td>@totalValue</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No orders available.</p>
+}

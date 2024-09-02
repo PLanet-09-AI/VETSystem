@@ -1,0 +1,32 @@
+﻿@model IEnumerable<BestReg.Data.SupplierOrder>
+@using System.Globalization;
+
+<h2>External Supplier Dashboard</h2>
+
+<!-- Button to navigate to the Inventory page -->
+<a href="@Url.Action("Inventory", "ExternalSupplier")" class="btn btn-primary mb-3">View Inventory</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order Date</th>
+            <th>Supplier Name</th>
+            <th>Total Items Ordered</th>
+            <th>Total Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            var items = order.Items ?? new List<OrderItem>(); // Ensure Items is not null
+            decimal totalValue = items.Sum(i => (i.Item?.PricePerUnit ?? 0) * i.QuantityOrdered); // Handle null Item and PricePerUnit
+
+            <tr>
+                <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                <td>@order.SupplierName</td>
+                <td>@items.Sum(i => i.QuantityOrdered)</td>
+                <td>@totalValue.ToString("C", new CultureInfo("en-ZA"))</td> <!-- Format as ZAR -->
+            </tr>
+        }
+    </tbody>
+</table>

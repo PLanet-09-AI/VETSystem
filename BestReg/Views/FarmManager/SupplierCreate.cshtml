@@ -1,0 +1,61 @@
+﻿@model BestReg.Data.SupplierOrder
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Create Supplier Order";
+    var currencyFormat = ViewBag.CurrencyFormat as CultureInfo ?? new CultureInfo("en-ZA");
+    var supplierBalance = ViewBag.SupplierBalance as decimal? ?? 0m;
+}
+
+<h1>Create Supplier Order</h1>
+
+<h4>Supplier Order</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SupplierCreate">
+            <div class="form-group">
+                <label asp-for="SupplierName" class="control-label"></label>
+                <input asp-for="SupplierName" class="form-control" />
+                <span asp-validation-for="SupplierName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Available Balance: @supplierBalance.ToString("C", currencyFormat)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Select Items</label>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Price Per Unit</th>
+                            <th>Quantity Available</th>
+                            <th>Quantity to Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.Items)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.PricePerUnit.ToString("C", currencyFormat)</td>
+                                <td>@item.QuantityInStock</td>
+                                <td>
+                                    <input type="hidden" name="selectedItems" value="@item.Id" />
+                                    <input type="number" name="quantities" class="form-control" min="0" max="@item.QuantityInStock" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create Order" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Dashboard">Back to Dashboard</a>
+</div>
