@@ -12,10 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using BestReg.Services;
 
-
 namespace BestReg.Controllers
 {
-
     [Authorize(Roles = "FarmWorker,Veterinarian")]
     public class AnimalsController : Controller
     {
@@ -46,35 +44,15 @@ namespace BestReg.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Species,DateOfBirth,Status")] Animal animal)
         {
-
             if (ModelState.IsValid)
             {
                 _context.Add(animal);
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("Animal created successfully with ID: {AnimalId}", animal.Id);
                 return RedirectToAction(nameof(Index));
-
-            _logger.LogInformation("Create action called.");
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogInformation("ModelState is valid. Adding animal to the database.");
-
-                try
-                {
-                    _context.Add(animal);
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation("Animal created successfully with ID: {AnimalId}", animal.Id);
-
-                    // Redirect to the Diagnosis page for the newly created animal
-                    return RedirectToAction("Index", "Animals", new { animalId = animal.Id });
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "An error occurred while creating the animal.");
-                }
-
             }
+
+            _logger.LogInformation("ModelState is invalid.");
             return View(animal);
         }
 
@@ -127,13 +105,16 @@ namespace BestReg.Controllers
             return View(animal);
         }
 
-
-
+        // GET: Animals/ConductCheckup/5
         [HttpGet]
-        
-        public async Task<IActionResult> ConductCheckup(int animalId)
+        public async Task<IActionResult> ConductCheckup(int? id)
         {
-            var animal = await _context.Animals.FindAsync(animalId);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var animal = await _context.Animals.FindAsync(id);
             if (animal == null)
             {
                 return NotFound();
@@ -141,7 +122,7 @@ namespace BestReg.Controllers
 
             var model = new ConductCheckupViewModel
             {
-                AnimalId = animalId,
+                AnimalId = animal.Id,
                 Animal = animal,
                 HealthMetrics = new HealthMetrics(),
                 TreatmentInfo = new IllnessTreatmentInfo()
@@ -149,6 +130,8 @@ namespace BestReg.Controllers
 
             return View(model);
         }
+
+        // POST: Animals/ConductCheckup
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConductCheckup(ConductCheckupViewModel model)
@@ -159,8 +142,6 @@ namespace BestReg.Controllers
                 var animal = await _context.Animals.FindAsync(model.AnimalId);
                 if (animal == null)
                 {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-
                     return NotFound();
                 }
 
@@ -188,15 +169,14 @@ namespace BestReg.Controllers
             return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
         }
 
-
-
-
+        // GET: Animals/SearchAnimal
         [HttpGet]
         public IActionResult SearchAnimal()
         {
             return View();
         }
 
+        // POST: Animals/SearchAnimal
         [HttpPost]
         public async Task<IActionResult> SearchAnimal(string searchTerm)
         {
@@ -206,8 +186,6 @@ namespace BestReg.Controllers
 
             return View("SearchResults", animals);
         }
-
-
 
         // GET: Animals/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -236,9 +214,9 @@ namespace BestReg.Controllers
             if (animal != null)
             {
                 _context.Animals.Remove(animal);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -292,69 +270,5 @@ namespace BestReg.Controllers
 
             return View(model);
         }
-
-        // GET: Animals/ConductCheckup/5
-        public async Task<IActionResult> ConductCheckup(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var animal = await _context.Animals.FindAsync(id);
-            if (animal == null)
-            {
-                return NotFound();
-            }
-
-            var model = new ConductCheckupViewModel
-            {
-                AnimalId = animal.Id,
-                Animal = animal,
-                HealthMetrics = new HealthMetrics(),
-                TreatmentInfo = new IllnessTreatmentInfo()
-            };
-
-            return View(model);
-        }
-
-        // POST: Animals/ConductCheckup/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConductCheckup(ConductCheckupViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                // Fetch the animal from the database
-                var animal = await _context.Animals.FindAsync(model.AnimalId);
-                if (animal == null)
-                {
-                    return NotFound();
-                }
-
-                // Create a new MedicalRecord entry
-                var medicalRecord = new MedicalRecord
-                {
-                    AnimalId = model.AnimalId,
-                    Diagnosis = model.Diagnosis,
-                    Treatment = model.TreatmentInfo.Treatment,
-                    RecordDate = DateTime.Now,
-                    HealthMetrics = model.HealthMetrics,
-                    IllnessTreatmentInfo = model.TreatmentInfo,
-                    CheckupDate = DateTime.Now
-                };
-
-                // Add the medical record to the database
-                _context.MedicalRecords.Add(medicalRecord);
-                await _context.SaveChangesAsync();
-
-                // Return a JSON response for AJAX success handling
-                return Json(new { success = true, message = "Diagnosis submitted successfully!" });
-            }
-
-            // Return validation errors if the model state is invalid
-            return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
-        }
     }
 }
-    }

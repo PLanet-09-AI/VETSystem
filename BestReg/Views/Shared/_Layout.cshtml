@@ -1,5 +1,6 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@@using Microsoft.AspNetCore.Identity
 @using BestReg.Data
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
@@ -38,88 +39,76 @@
                             var user = await UserManager.GetUserAsync(User);
                             var roles = await UserManager.GetRolesAsync(user);
 
-
-                                if (roles.Contains("Admin"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
-                                    </li>
-                                }
-                                if (roles.Contains("SystemAdmin"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">System Admin Dashboard</a>
-                                    </li>
-                                }
-                                if (roles.Contains("FarmManager"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="FarmManager" asp-action="Appointments">View Appointments</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="FarmManager" asp-action="BookAppointment">Book New Appointment</a>
-                                    </li>
-                                }
-                                @if (User.IsInRole("Veterinarian"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="PendingAppointments">Pending Appointments</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="AcceptedAppointments">Accepted Appointments</a>
-                                    </li>
-                                }
-                                if (roles.Contains("FarmWorker"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Animal" asp-action="Index">Manage Animals</a>
-                                    </li>
-                                }
-                                if (roles.Contains("VetAdmin"))
-                                {
-                                    @if (User.IsInRole("VetAdmin"))
-                                    {
-                                        <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="Index">Vet Admin Dashboard</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="Create">Create Appointment Slot</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="PendingAppointments">Pending Appointments</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="Schedule">Appointment Schedule</a>
-                                        </li>
-                                    }
-
-                                }
-                                if (roles.Contains("ExternalSupplier"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Supplier" asp-action="Orders">Supplier Orders</a>
-                                    </li>
-
                             if (roles.Contains("Admin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
                                 </li>
-
                             }
-                            else if (roles.Contains("Student"))
+                            if (roles.Contains("SystemAdmin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">System Admin Dashboard</a>
+                                </li>
+                            }
+                            if (roles.Contains("FarmManager"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="FarmManager" asp-action="Appointments">View Appointments</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="FarmManager" asp-action="BookAppointment">Book New Appointment</a>
+                                </li>
+                            }
+                            if (roles.Contains("Veterinarian"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="PendingAppointments">Pending Appointments</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="AcceptedAppointments">Accepted Appointments</a>
+                                </li>
+                            }
+                            if (roles.Contains("FarmWorker"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Animal" asp-action="Index">Manage Animals</a>
+                                </li>
+                            }
+                            if (roles.Contains("VetAdmin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="Index">Vet Admin Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="Create">Create Appointment Slot</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="PendingAppointments">Pending Appointments</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="Schedule">Appointment Schedule</a>
+                                </li>
+                            }
+                            if (roles.Contains("ExternalSupplier"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Supplier" asp-action="Orders">Supplier Orders</a>
+                                </li>
+                            }
+                            if (roles.Contains("Student"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="QrCode" asp-action="ShowQrCode">My QR Code</a>
                                 </li>
                             }
-                            else if (roles.Contains("Parent"))
+                            if (roles.Contains("Parent"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="QrCode" asp-action="ShowQrCode">My Child's QR Code</a>
                                 </li>
                             }
-                            else if (roles.Contains("BusDriver") || roles.Contains("SchoolSecurity"))
+                            if (roles.Contains("BusDriver") || roles.Contains("SchoolSecurity"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="QrCode" asp-action="ScanQRCode">Scan QR Code</a>
@@ -144,7 +133,6 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
                             </li>
-
                         }
                     </ul>
                 </div>
