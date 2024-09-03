@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using BestReg.Models; // Ensure you have this using directive for your models
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BestReg.Data
 {
-    public class ApplicationDbContext:IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<SupplierOrder> SupplierOrders { get; set; }
@@ -22,12 +24,14 @@ namespace BestReg.Data
 
         // If you have an Animal model, add it as well
         public DbSet<Animal> Animals { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
-       //Entities
-
+        // Entities
+        public DbSet<CheckInRecord> CheckInRecords { get; set; }
+        public DbSet<AttendanceRecord> AttendanceRecords { get; set; }
 
     }
 }

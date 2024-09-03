@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,6 +29,7 @@ namespace BestReg.Data
         {
             var roles = new[]
             {
+
                 "SystemAdmin",
                 "FarmWorker",
                 "Veterinarian",
@@ -36,6 +37,14 @@ namespace BestReg.Data
                 "VetAdmin",
                 "ExternalSupplier"
             };
+
+        "Admin",
+        "SchoolSecurity",
+        "BusDriver",
+        "Student",
+        "Parent"
+    };
+
 
             foreach (var roleName in roles)
             {
@@ -45,15 +54,14 @@ namespace BestReg.Data
                     var result = await roleManager.CreateAsync(role);
                     if (!result.Succeeded)
                     {
-                        // Log error messages using your logging framework
                         Console.WriteLine($"Error creating role {roleName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                     }
                 }
             }
 
-            // Optionally log success message
             Console.WriteLine("Roles seeded successfully.");
         }
+
 
         private static async Task SeedUsersAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -114,6 +122,10 @@ namespace BestReg.Data
 
 
         private static async Task SeedUserAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, string email, string role, string firstName, string lastName)
+
+
+        private static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+
         {
             var user = new ApplicationUser
             {

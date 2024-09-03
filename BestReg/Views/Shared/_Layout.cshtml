@@ -36,9 +36,8 @@
                         @if (SignInManager.IsSignedIn(User))
                         {
                             var user = await UserManager.GetUserAsync(User);
-                            if (user != null)
-                            {
-                                var roles = await UserManager.GetRolesAsync(user);
+                            var roles = await UserManager.GetRolesAsync(user);
+
 
                                 if (roles.Contains("Admin"))
                                 {
@@ -97,17 +96,33 @@
                                     <li class="nav-item">
                                         <a class="nav-link text-dark" asp-area="" asp-controller="Supplier" asp-action="Orders">Supplier Orders</a>
                                     </li>
-                                }
-                            }
-                            else
+
+                            if (roles.Contains("Admin"))
                             {
-                                // Handle null user scenario
                                 <li class="nav-item">
-                                    <span class="nav-link text-dark">User not found</span>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
+                                </li>
+
+                            }
+                            else if (roles.Contains("Student"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="QrCode" asp-action="ShowQrCode">My QR Code</a>
+                                </li>
+                            }
+                            else if (roles.Contains("Parent"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="QrCode" asp-action="ShowQrCode">My Child's QR Code</a>
+                                </li>
+                            }
+                            else if (roles.Contains("BusDriver") || roles.Contains("SchoolSecurity"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="QrCode" asp-action="ScanQRCode">Scan QR Code</a>
                                 </li>
                             }
                         }
-
                     </ul>
                     <ul class="navbar-nav">
                         @if (SignInManager.IsSignedIn(User))
