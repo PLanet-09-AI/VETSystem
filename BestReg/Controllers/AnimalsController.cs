@@ -18,11 +18,13 @@ namespace BestReg.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AnimalsController> _logger;
+        private readonly ICheckupService _checkupService;
 
-        public AnimalsController(ApplicationDbContext context, ILogger<AnimalsController> logger)
+        public AnimalsController(ApplicationDbContext context, ILogger<AnimalsController> logger, ICheckupService checkupService)
         {
             _context = context;
             _logger = logger;
+            _checkupService = checkupService;
         }
 
         // GET: Animals
@@ -99,6 +101,85 @@ namespace BestReg.Controllers
             }
             return View(animal);
         }
+
+        [HttpGet]
+        
+        public async Task<IActionResult> ConductCheckup(int animalId)
+        {
+            var animal = await _context.Animals.FindAsync(animalId);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+
+            var model = new ConductCheckupViewModel
+            {
+                AnimalId = animalId,
+                Animal = animal,
+                HealthMetrics = new HealthMetrics(),
+                TreatmentInfo = new IllnessTreatmentInfo()
+            };
+
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConductCheckup(ConductCheckupViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Fetch the animal from the database
+                var animal = await _context.Animals.FindAsync(model.AnimalId);
+                if (animal == null)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+
+                    return NotFound();
+                }
+
+                // Create a new MedicalRecord entry
+                var medicalRecord = new MedicalRecord
+                {
+                    AnimalId = model.AnimalId,
+                    Diagnosis = model.Diagnosis,
+                    Treatment = model.TreatmentInfo.Treatment,
+                    RecordDate = DateTime.Now,
+                    HealthMetrics = model.HealthMetrics,
+                    IllnessTreatmentInfo = model.TreatmentInfo,
+                    CheckupDate = DateTime.Now
+                };
+
+                // Add the medical record to the database
+                _context.MedicalRecords.Add(medicalRecord);
+                await _context.SaveChangesAsync();
+
+                // Return a JSON response for AJAX success handling
+                return Json(new { success = true, message = "Diagnosis submitted successfully!" });
+            }
+
+            // Return validation errors if the model state is invalid
+            return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
+        }
+
+
+
+
+        [HttpGet]
+        public IActionResult SearchAnimal()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchAnimal(string searchTerm)
+        {
+            var animals = await _context.Animals
+                .Where(a => a.Name.Contains(searchTerm) || a.Id.ToString() == searchTerm)
+                .ToListAsync();
+
+            return View("SearchResults", animals);
+        }
+
 
 
         // GET: Animals/Delete/5

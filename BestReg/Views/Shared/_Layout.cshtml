@@ -61,10 +61,13 @@
                                         <a class="nav-link" asp-controller="FarmManager" asp-action="BookAppointment">Book New Appointment</a>
                                     </li>
                                 }
-                                if (roles.Contains("Veterinarian"))
+                                @if (User.IsInRole("Veterinarian"))
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Vet" asp-action="Schedule">Vet Dashboard</a>
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="PendingAppointments">Pending Appointments</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="AcceptedAppointments">Accepted Appointments</a>
                                     </li>
                                 }
                                 if (roles.Contains("FarmWorker"))

@@ -8,6 +8,8 @@
         public string Treatment { get; set; }
         public string Diagnosis { get; set; }
         public Animal Animal { get; set; }
+        public IllnessTreatmentInfo IllnessTreatmentInfo { get; set; } // Add this property
+        public DateTime CheckupDate { get; set; } // Add this property
 
         // Additional fields if needed
         public IllnessTreatmentInfo IllnessTreatmentInfo { get; set; }

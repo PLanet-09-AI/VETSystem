@@ -270,6 +270,12 @@ namespace BestReg.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<double>("HeartRate")
+                        .HasColumnType("float");
+
+                    b.Property<double>("RespirationRate")
+                        .HasColumnType("float");
+
                     b.Property<double>("Temperature")
                         .HasColumnType("float");
 
@@ -292,6 +298,9 @@ namespace BestReg.Migrations
                     b.Property<string>("Diagnosis")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCritical")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Treatment")
                         .IsRequired()
