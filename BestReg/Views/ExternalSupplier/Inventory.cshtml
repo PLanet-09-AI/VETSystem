@@ -1,32 +1,105 @@
-﻿@model IEnumerable<BestReg.Data.SupplierOrder>
-@using System.Globalization;
+﻿@model IEnumerable<BestReg.Data.InventoryItem>
+@using System.Globalization
 
-<h2>External Supplier Dashboard</h2>
+@{
+    ViewData["Title"] = "Inventory";
+    var currencyFormat = ViewBag.CurrencyFormat as CultureInfo ?? new CultureInfo("en-ZA");
 
-<!-- Button to navigate to the Inventory page -->
-<a href="@Url.Action("Inventory", "ExternalSupplier")" class="btn btn-primary mb-3">View Inventory</a>
+    // Prepare data for the chart
+    var itemNames = Model.Select(i => i.Name).ToArray();
+    var itemQuantities = Model.Select(i => i.QuantityInStock).ToArray();
+}
 
+<h1>Inventory Items</h1>
+
+<!-- Table displaying inventory items -->
 <table class="table">
     <thead>
         <tr>
-            <th>Order Date</th>
-            <th>Supplier Name</th>
-            <th>Total Items Ordered</th>
-            <th>Total Value</th>
+            <th>Item Name</th>
+            <th>Price Per Unit</th>
+            <th>Quantity In Stock</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var order in Model)
+        @foreach (var item in Model)
         {
-            var items = order.Items ?? new List<OrderItem>(); // Ensure Items is not null
-            decimal totalValue = items.Sum(i => (i.Item?.PricePerUnit ?? 0) * i.QuantityOrdered); // Handle null Item and PricePerUnit
-
             <tr>
-                <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
-                <td>@order.SupplierName</td>
-                <td>@items.Sum(i => i.QuantityOrdered)</td>
-                <td>@totalValue.ToString("C", new CultureInfo("en-ZA"))</td> <!-- Format as ZAR -->
+                <td>@item.Name</td>
+                <td>@item.PricePerUnit.ToString("C", currencyFormat)</td>
+                <td>@item.QuantityInStock</td>
             </tr>
         }
     </tbody>
 </table>
+
+@if (Model.Any())
+{
+    <!-- Canvas element for the pie chart -->
+    <div style="width: 400px; height: 400px;">
+        <canvas id="inventoryPieChart"></canvas>
+    </div>
+}
+else
+{
+    <p>No inventory data available to display.</p>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            createInventoryPieChart();
+        });
+
+        function createInventoryPieChart() {
+            var itemNames = @Html.Raw(Json.Serialize(itemNames));
+            var itemQuantities = @Html.Raw(Json.Serialize(itemQuantities));
+
+            console.log("Item Names:", itemNames);
+            console.log("Item Quantities:", itemQuantities);
+
+            var ctx = document.getElementById('inventoryPieChart').getContext('2d');
+            var inventoryPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: itemNames,
+                    datasets: [{
+                        label: 'Inventory Quantity',
+                        data: itemQuantities,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Inventory Distribution'
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

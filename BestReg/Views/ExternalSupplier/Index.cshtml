@@ -10,7 +10,6 @@
 
 @Html.ActionLink("Request Stock from Supplier", "SupplierCreate", "ExternalSupplier", null, new { @class = "btn btn-primary" })
 
-
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New Item</a>
 </p>
@@ -51,3 +50,75 @@
         }
     </tbody>
 </table>
+
+<!-- Canvas for the line graph -->
+<div style="width: 100%; height: 400px;">
+    <canvas id="inventoryLineChart"></canvas>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            createInventoryLineChart();
+        });
+
+        function createInventoryLineChart() {
+            var itemNames = @Html.Raw(Json.Serialize(Model.Select(i => i.Name)));
+            var itemQuantities = @Html.Raw(Json.Serialize(Model.Select(i => i.QuantityInStock)));
+            var itemPrices = @Html.Raw(Json.Serialize(Model.Select(i => i.PricePerUnit)));
+
+            var ctx = document.getElementById('inventoryLineChart').getContext('2d');
+            var inventoryLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: itemNames,
+                    datasets: [
+                        {
+                            label: 'Quantity in Stock',
+                            data: itemQuantities,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            yAxisID: 'y-axis-quantity'
+                        },
+                        {
+                            label: 'Price per Unit',
+                            data: itemPrices,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            yAxisID: 'y-axis-price'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        'y-axis-quantity': {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Quantity'
+                            }
+                        },
+                        'y-axis-price': {
+                            type: 'linear',
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Price (ZAR)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Inventory Overview'
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

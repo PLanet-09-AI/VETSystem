@@ -18,10 +18,11 @@ namespace BestReg.Data
         [Required]
         [Display(Name = "Appointment Type")]
         public string AppointmentType { get; set; }
+        public int AnimalId { get; set; }
 
         [Required]
         public string VetAdminId { get; set; }
-        public int AnimalId { get; set; } // Add this property
+      
 
         public bool IsBooked { get; set; } = false;
         public bool Canceled { get; set; } = false;
