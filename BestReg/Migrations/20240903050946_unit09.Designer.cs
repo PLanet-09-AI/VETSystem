@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BestReg.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240902121616_VetAdmin")]
-    partial class VetAdmin
+    [Migration("20240903050946_unit09")]
+    partial class unit09
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,32 @@ namespace BestReg.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AttendanceRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AttendanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AttendanceRecords");
+                });
 
             modelBuilder.Entity("BestReg.Data.Animal", b =>
                 {
@@ -175,6 +201,32 @@ namespace BestReg.Migrations
                     b.ToTable("AppointmentTypes");
                 });
 
+            modelBuilder.Entity("BestReg.Data.CheckInRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCheckedOut")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CheckInRecords");
+                });
+
             modelBuilder.Entity("BestReg.Data.DiagnosisRecord", b =>
                 {
                     b.Property<int>("Id")
@@ -296,6 +348,9 @@ namespace BestReg.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsCritical")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Treatment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -303,6 +358,29 @@ namespace BestReg.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("IllnessTreatmentInfo");
+                });
+
+            modelBuilder.Entity("BestReg.Data.InventoryItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PricePerUnit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("QuantityInStock")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InventoryItems");
                 });
 
             modelBuilder.Entity("BestReg.Data.MedicalRecord", b =>
@@ -369,6 +447,39 @@ namespace BestReg.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NutritionStocks");
+                });
+
+            modelBuilder.Entity("BestReg.Data.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityOrdered")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("BestReg.Data.SupplierOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SupplierName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SupplierOrders");
                 });
 
             modelBuilder.Entity("BestReg.Data.VaccinationSchedule", b =>
@@ -440,8 +551,6 @@ namespace BestReg.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AnimalId");
 
                     b.ToTable("VetAppointments");
                 });
@@ -643,21 +752,27 @@ namespace BestReg.Migrations
                     b.Navigation("IllnessTreatmentInfo");
                 });
 
+            modelBuilder.Entity("BestReg.Data.OrderItem", b =>
+                {
+                    b.HasOne("BestReg.Data.InventoryItem", "Item")
+                        .WithMany()
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BestReg.Data.SupplierOrder", null)
+                        .WithMany("Items")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+                });
+
             modelBuilder.Entity("BestReg.Data.VaccinationSchedule", b =>
                 {
                     b.HasOne("BestReg.Data.Animal", "Animal")
                         .WithMany("VaccinationSchedules")
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Animal");
-                });
-
-            modelBuilder.Entity("BestReg.Data.VetAppointment", b =>
-                {
-                    b.HasOne("BestReg.Data.Animal", "Animal")
-                        .WithMany()
                         .HasForeignKey("AnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -725,6 +840,11 @@ namespace BestReg.Migrations
                     b.Navigation("MedicalRecords");
 
                     b.Navigation("VaccinationSchedules");
+                });
+
+            modelBuilder.Entity("BestReg.Data.SupplierOrder", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

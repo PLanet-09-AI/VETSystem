@@ -1,8 +1,4 @@
-
-﻿using Amazon.SimpleSystemsManagement.Model;
-
 using BestReg.Models; // Ensure you have this using directive for your models
-
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +6,7 @@ namespace BestReg.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-
+        // DbSets for your entities
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<SupplierOrder> SupplierOrders { get; set; }
@@ -23,23 +19,18 @@ namespace BestReg.Data
         public DbSet<NutritionStock> NutritionStocks { get; set; }
         public DbSet<MedicalRecord> MedicalRecords { get; set; }
         public DbSet<Event> Events { get; set; }
-
         public DbSet<Animal> Animals { get; set; }
-        public DbSet<InventoryItem> InventoryItems { get; set; } // Add InventoryItem DbSet
-        public DbSet<SupplierOrder> SupplierOrders { get; set; } // Add SupplierOrder DbSet
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-
-  
-
-        // If you have an Animal model, add it as well
-        public DbSet<Animal> Animals { get; set; }
+        public DbSet<CheckInRecord> CheckInRecords { get; set; }
+        public DbSet<AttendanceRecord> AttendanceRecords { get; set; }
+        
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
 
             // Example of configuring relationships and constraints
             modelBuilder.Entity<MedicalRecord>()
@@ -50,17 +41,15 @@ namespace BestReg.Data
             modelBuilder.Entity<OrderItem>()
                 .HasOne(o => o.Item)
                 .WithMany()
-                .HasForeignKey(o => o.ItemId);
-
-        // Entities
-        public DbSet<CheckInRecord> CheckInRecords { get; set; }
-        public DbSet<AttendanceRecord> AttendanceRecords { get; set; }
-
+                .HasForeignKey(o => o.Id);
 
             modelBuilder.Entity<SupplierOrder>()
                 .HasMany(s => s.Items)
                 .WithOne()
-                .HasForeignKey(o => o.SupplierOrderId);
+                .HasForeignKey(o => o.Id);
+            
+
+            // Add any additional configurations here
         }
     }
 }

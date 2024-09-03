@@ -14,30 +14,5 @@
         public List<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
     }
 
-   
 
-    public class InventoryItem
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal PricePerUnit { get; set; }
-        public int QuantityInStock { get; set; }
-    }
-
-    public class OrderItem
-    {
-        public int Id { get; set; }
-        public int ItemId { get; set; }
-        public InventoryItem Item { get; set; }
-        public int QuantityOrdered { get; set; }
-        public int SupplierOrderId { get; set; }
-    }
-
-    public class SupplierOrder
-    {
-        public int Id { get; set; }
-        public string SupplierName { get; set; }
-        public DateTime OrderDate { get; set; }
-        public ICollection<OrderItem> Items { get; set; }
-    }
 }
