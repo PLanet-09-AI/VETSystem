@@ -31,6 +31,9 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 // Register the AnimalService with the DI container
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 
+// Register the CheckupService with the DI container
+builder.Services.AddScoped<ICheckupService, CheckupService>();
+
 // Add services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

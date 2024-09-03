@@ -7,17 +7,22 @@ using System.Threading.Tasks;
 using BestReg.Data;
 using Microsoft.AspNetCore.Authorization;
 using BestReg.Models;
+using BestReg.Services;
 
 namespace BestReg.Controllers
 {
-    [Authorize(Roles = "VetAdmin")]
+    [Authorize(Roles = "VetAdmin,Veterinarian")]
     public class VetAppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICheckupService _checkupService;
+        private readonly IAnimalService _animalService;
 
-        public VetAppointmentsController(ApplicationDbContext context)
+        public VetAppointmentsController(ApplicationDbContext context, ICheckupService checkupService, IAnimalService animalService)
         {
             _context = context;
+            _checkupService = checkupService;
+            _animalService = animalService;
         }
 
         // GET: VetAppointments
@@ -48,7 +53,7 @@ namespace BestReg.Controllers
                 vetAppointment.Canceled = false;
                 vetAppointment.IsDeclined = false;
                 vetAppointment.IsNotified = false;
-
+                vetAppointment.AnimalId = 0;
                 _context.Add(vetAppointment);
                 await _context.SaveChangesAsync();
 
@@ -298,7 +303,7 @@ namespace BestReg.Controllers
             return RedirectToAction("Index");
         }
 
-        
+
 
         // Record Feeding Activity
         public IActionResult RecordFeeding(int animalId)
@@ -347,7 +352,7 @@ namespace BestReg.Controllers
             return View(records);
         }
 
-     
+
         [HttpPost]
         public async Task<IActionResult> ScheduleEvent(Event eventModel)
         {
@@ -400,6 +405,7 @@ namespace BestReg.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
         public IActionResult SearchAnimal()
         {
             return View();
@@ -414,6 +420,62 @@ namespace BestReg.Controllers
 
             return View("SearchResults", animals);
         }
+        [HttpGet]
+        public async Task<IActionResult> ConductCheckup(int animalId)
+        {
+            if (animalId <= 0)
+            {
+                return BadRequest("Invalid animal ID.");
+            }
+
+            var animal = await _animalService.GetAnimalByIdAsync(animalId);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+
+            var model = new ConductCheckupViewModel
+            {
+                AnimalId = animalId,
+                Animal = animal,
+                HealthMetrics = new HealthMetrics(),
+                TreatmentInfo = new IllnessTreatmentInfo()
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConductCheckup(ConductCheckupViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var animal = await _checkupService.ConductCheckupAsync(model.AnimalId, model.HealthMetrics, model.TreatmentInfo);
+                if (animal == null)
+                {
+                    return NotFound();
+                }
+
+                return RedirectToAction("ViewAnimalDetails", new { id = model.AnimalId });
+            }
+
+            return View(model);
+        }
+
+        // GET: VetAppointments/AcceptedAppointments
+        public async Task<IActionResult> AcceptedAppointments()
+        {
+            var acceptedAppointments = await _context.VetAppointments
+                .Where(a => a.IsAccepted && !a.Canceled && !a.IsDeclined)
+                .OrderBy(a => a.StartTime)
+                .ToListAsync();
+
+            return View(acceptedAppointments);
+        }
+
+
         //// GET: VetAppointments/DiagnosisCheckup/5
         //public async Task<IActionResult> DiagnosisCheckup(int? id)
         //{

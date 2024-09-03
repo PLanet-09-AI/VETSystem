@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+using BestReg.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,7 +35,12 @@ namespace BestReg.Data
                 "Veterinarian",
                 "FarmManager",
                 "VetAdmin",
-                "ExternalSupplier"
+                "ExternalSupplier",
+                "Admin",
+                "SchoolSecurity",
+                "BusDriver",
+                "Student",
+                "Parent"
             };
 
             foreach (var roleName in roles)
@@ -45,13 +51,11 @@ namespace BestReg.Data
                     var result = await roleManager.CreateAsync(role);
                     if (!result.Succeeded)
                     {
-                        // Log error messages using your logging framework
                         Console.WriteLine($"Error creating role {roleName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                     }
                 }
             }
 
-            // Optionally log success message
             Console.WriteLine("Roles seeded successfully.");
         }
 
@@ -93,17 +97,18 @@ namespace BestReg.Data
                 await SeedUserAsync(userManager, roleManager, "externalsupplier@gmail.com", "ExternalSupplier", "External", "Supplier");
             }
         }
+
         private static async Task SeedAppointmentTypesAsync(ApplicationDbContext context)
         {
             if (!context.AppointmentTypes.Any())
             {
                 var appointmentTypes = new[]
                 {
-            new AppointmentType { Name = "Check-up" },
-            new AppointmentType { Name = "Vaccination" },
-            new AppointmentType { Name = "Treatments" },
-            new AppointmentType { Name = "Nutrients" }
-        };
+                    new AppointmentType { Name = "Check-up" },
+                    new AppointmentType { Name = "Vaccination" },
+                    new AppointmentType { Name = "Treatments" },
+                    new AppointmentType { Name = "Nutrients" }
+                };
 
                 context.AppointmentTypes.AddRange(appointmentTypes);
                 await context.SaveChangesAsync();
@@ -111,7 +116,6 @@ namespace BestReg.Data
                 Console.WriteLine("Appointment types seeded successfully.");
             }
         }
-
 
         private static async Task SeedUserAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, string email, string role, string firstName, string lastName)
         {

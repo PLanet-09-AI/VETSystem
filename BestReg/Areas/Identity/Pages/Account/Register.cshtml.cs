@@ -115,50 +115,39 @@ namespace BestReg.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    if (await _roleManager.RoleExistsAsync(Input.SelectedRole))
+                    // Assign the selected role to the user
+                    if (!string.IsNullOrEmpty(Input.SelectedRole))
                     {
                         await _userManager.AddToRoleAsync(user, Input.SelectedRole);
-
-                        // Generate and save QR code if the user is a student
-                        if (Input.SelectedRole == "Student")
-                        {
-                            var qrCodeBytes = _emailService.GenerateQrCode(user.IDNumber);
-                            user.QrCodeBase64 = Convert.ToBase64String(qrCodeBytes);
-                            await _userManager.UpdateAsync(user);
-                        }
                     }
-
 
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Automatically sign in the user after registration
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Page(
+                        "/Account/ConfirmEmail",
+                        pageHandler: null,
+                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                        protocol: Request.Scheme);
 
+                    await _emailService.SendConfirmationEmailAsync(Input.Email, callbackUrl);
 
-                    //_logger.LogInformation("User created a new account with password.");
+                    var qrCodeImage = _emailService.GenerateQrCode(user.Email);
+                    var qrCodeBase64 = Convert.ToBase64String(qrCodeImage);
 
-                    //var userId = await _userManager.GetUserIdAsync(user);
-                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    //var callbackUrl = Url.Page(
-                    //    "/Account/ConfirmEmail",
-                    //    pageHandler: null,
-                    //    values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                    //    protocol: Request.Scheme);
+                    await _emailService.SendQrCodeEmailAsync(Input.Email, qrCodeBase64);
 
-                    //await SendEmailAsync(Input.Email, "Confirm your email",
-                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    //if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    //{
-                    //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    //}
-                    //else
-                    //{
-                    //    await _signInManager.SignInAsync(user, isPersistent: false);
-                    //    return LocalRedirect(returnUrl);
-                    //}
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    {
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                    }
+                    else
+                    {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                    }
                 }
 
                 foreach (var error in result.Errors)
@@ -167,35 +156,8 @@ namespace BestReg.Areas.Identity.Pages.Account
                 }
             }
 
+            // Redisplay the form if we got this far (meaning something failed)
             return Page();
-        }
-
-        private async Task<bool> SendEmailAsync(string email, string subject, string confirmLink)
-        {
-            try
-            {
-                MailMessage message = new MailMessage();
-                SmtpClient smtpClient = new SmtpClient();
-                message.From = new MailAddress("dutengagement@outlook.com");
-                message.To.Add(email);
-                message.Subject = subject;
-                message.IsBodyHtml = true;
-                message.Body = confirmLink;
-
-                smtpClient.Port = 587;
-                smtpClient.Host = "smtp.outlook.com";
-                smtpClient.EnableSsl = true;
-                smtpClient.UseDefaultCredentials = false;
-                smtpClient.Credentials = new NetworkCredential("dutengagement@outlook.com", "Admin@Dut01");
-                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtpClient.Send(message);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while sending the email: {Message}", ex.Message);
-                return false;
-            }
         }
     }
 }

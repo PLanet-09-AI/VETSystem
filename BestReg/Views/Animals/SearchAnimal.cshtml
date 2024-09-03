@@ -1,0 +1,11 @@
+﻿@model string
+
+<h2>Search Animal for Checkup</h2>
+
+<form asp-action="SearchAnimal" method="post">
+    <div class="form-group">
+        <label for="searchTerm">Search by Animal Name or ID:</label>
+        <input type="text" class="form-control" id="searchTerm" name="searchTerm" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>

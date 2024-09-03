@@ -1,0 +1,42 @@
+﻿@model BestReg.Models.ConductCheckupViewModel
+
+<h2>Conduct Checkup for @Model.Animal.Name</h2>
+
+<form id="diagnosisForm" asp-action="ConductCheckup" method="post">
+    <input type="hidden" asp-for="AnimalId" />
+
+    <div class="form-group">
+        <label asp-for="Animal.Name" class="control-label"></label>
+        <input asp-for="Animal.Name" class="form-control" />
+        <span asp-validation-for="Animal.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Animal.Status" class="control-label"></label>
+        <input asp-for="Animal.Status" class="form-control" />
+        <span asp-validation-for="Animal.Status" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Animal.Species" class="control-label"></label>
+        <input asp-for="Animal.Species" class="form-control" />
+        <span asp-validation-for="Animal.Species" class="text-danger"></span>
+    </div>
+
+        <div class="form-group">
+        <label asp-for="AnimalId" class="control-label"></label>
+        <select asp-for="AnimalId" class="form-control" asp-items="ViewBag.Animals">
+            <option value="">Select an Animal</option>
+        </select>
+        <span asp-validation-for="AnimalId" class="text-danger"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="Diagnosis" class="control-label"></label>
+        <textarea asp-for="Diagnosis" class="form-control"></textarea>
+        <span asp-validation-for="Diagnosis" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Diagnosis</button>
+</form>
