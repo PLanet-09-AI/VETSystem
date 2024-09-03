@@ -12,8 +12,11 @@
         public DateTime CheckupDate { get; set; } // Add this property
 
         // Additional fields if needed
+
         public IllnessTreatmentInfo IllnessTreatmentInfo { get; set; }
         public DateTime CheckupDate { get; set; }
+
+
         public HealthMetrics HealthMetrics { get; set; }
 
     }

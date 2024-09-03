@@ -1,0 +1,37 @@
+﻿@model BestReg.Models.ConductCheckupViewModel
+
+@{
+    var animal = Model.Animal; // This should now be properly initialized
+}
+
+<h1>Conduct Checkup for @animal.Name</h1>
+
+<form asp-action="ConductCheckup" method="post">
+    <input type="hidden" asp-for="AnimalId" />
+
+    <div class="form-group">
+        <label asp-for="HealthMetrics.Weight" class="control-label"></label>
+        <input asp-for="HealthMetrics.Weight" class="form-control" />
+        <span asp-validation-for="HealthMetrics.Weight" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="HealthMetrics.Temperature" class="control-label"></label>
+        <input asp-for="HealthMetrics.Temperature" class="form-control" />
+        <span asp-validation-for="HealthMetrics.Temperature" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TreatmentInfo.Diagnosis" class="control-label"></label>
+        <input asp-for="TreatmentInfo.Diagnosis" class="form-control" />
+        <span asp-validation-for="TreatmentInfo.Diagnosis" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TreatmentInfo.Treatment" class="control-label"></label>
+        <input asp-for="TreatmentInfo.Treatment" class="form-control" />
+        <span asp-validation-for="TreatmentInfo.Treatment" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

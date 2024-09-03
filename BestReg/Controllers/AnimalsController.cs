@@ -10,9 +10,12 @@ using Microsoft.Extensions.Logging;
 using BestReg.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using BestReg.Services;
+
 
 namespace BestReg.Controllers
 {
+
     [Authorize(Roles = "FarmWorker,Veterinarian")]
     public class AnimalsController : Controller
     {
@@ -43,15 +46,37 @@ namespace BestReg.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Species,DateOfBirth,Status")] Animal animal)
         {
+
             if (ModelState.IsValid)
             {
                 _context.Add(animal);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+
+            _logger.LogInformation("Create action called.");
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogInformation("ModelState is valid. Adding animal to the database.");
+
+                try
+                {
+                    _context.Add(animal);
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("Animal created successfully with ID: {AnimalId}", animal.Id);
+
+                    // Redirect to the Diagnosis page for the newly created animal
+                    return RedirectToAction("Index", "Animals", new { animalId = animal.Id });
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred while creating the animal.");
+                }
+
             }
             return View(animal);
         }
-
 
         // GET: Animals/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -101,6 +126,8 @@ namespace BestReg.Controllers
             }
             return View(animal);
         }
+
+
 
         [HttpGet]
         
@@ -330,3 +357,4 @@ namespace BestReg.Controllers
         }
     }
 }
+    }
