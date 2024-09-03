@@ -7,11 +7,45 @@
   </PropertyGroup>
 
   <ItemGroup>
+
     <Content Remove="Views\VetAppointments\SearchAnimal.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Views\VetAppointments\SearchAnimal.cshtml" />
+=======
+    <None Include="Areas\Identity\Pages\Account\ConfirmEmail.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\ConfirmEmailChange.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\Login.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\Logout.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\Register.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\RegisterConfirmation.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\ResendEmailConfirmation.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\ResetPassword.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\ResetPasswordConfirmation.cshtml" />
+    <None Include="Areas\Identity\Pages\Account\_ViewImports.cshtml" />
+    <None Include="Areas\Identity\Pages\_ValidationScriptsPartial.cshtml" />
+    <None Include="Areas\Identity\Pages\_ViewImports.cshtml" />
+    <None Include="Areas\Identity\Pages\_ViewStart.cshtml" />
+    <None Include="Views\Admin\CreateUser.cshtml" />
+    <None Include="Views\Admin\Index.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Home\Privacy.cshtml" />
+    <None Include="Views\QrCode\CheckInConfirmation.cshtml" />
+    <None Include="Views\QrCode\CheckInUser.cshtml" />
+    <None Include="Views\QrCode\ScanQRCode.cshtml" />
+    <None Include="Views\QrCode\ShowQrCode.cshtml" />
+    <None Include="Views\QrCode\UserDetails.cshtml" />
+    <None Include="Views\SchoolAuthority\Index.cshtml" />
+    <None Include="Views\SchoolAuthority\ScanIn.cshtml" />
+    <None Include="Views\SchoolAuthority\ScanOut.cshtml" />
+    <None Include="Views\Shared\Error.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Shared\_LoginPartial.cshtml" />
+    <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="Views\_ViewImports.cshtml" />
+    <None Include="Views\_ViewStart.cshtml" />
+
   </ItemGroup>
 
   <ItemGroup>

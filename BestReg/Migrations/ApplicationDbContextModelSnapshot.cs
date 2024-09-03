@@ -22,13 +22,18 @@ namespace BestReg.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+
             modelBuilder.Entity("BestReg.Data.Animal", b =>
+
+            modelBuilder.Entity("AttendanceRecord", b =>
+
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -41,12 +46,28 @@ namespace BestReg.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
+
+                    b.Property<DateTime>("AttendanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+
                     b.ToTable("Animals");
+
+                    b.ToTable("AttendanceRecords");
+
                 });
 
             modelBuilder.Entity("BestReg.Data.ApplicationUser", b =>
@@ -129,7 +150,11 @@ namespace BestReg.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+
             modelBuilder.Entity("BestReg.Data.Appointment", b =>
+
+            modelBuilder.Entity("CheckInRecord", b =>
+
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -448,6 +473,26 @@ namespace BestReg.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("VetAppointments");
+
+                    b.Property<DateTime>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCheckedOut")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CheckInRecords");
+
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -586,7 +631,6 @@ namespace BestReg.Migrations
 
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
-
             modelBuilder.Entity("BestReg.Data.Appointment", b =>
                 {
                     b.HasOne("BestReg.Data.ApplicationUser", "VetAdmin")
@@ -656,6 +700,17 @@ namespace BestReg.Migrations
                         .IsRequired();
 
                     b.Navigation("Animal");
+
+            modelBuilder.Entity("CheckInRecord", b =>
+                {
+                    b.HasOne("BestReg.Data.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
