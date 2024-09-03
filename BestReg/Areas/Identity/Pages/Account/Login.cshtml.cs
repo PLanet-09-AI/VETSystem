@@ -105,7 +105,7 @@ namespace BestReg.Areas.Identity.Pages.Account
                         }
                         if (roles.Contains("ExternalSupplier"))
                         {
-                            return RedirectToAction("Orders", "Supplier");
+                            return RedirectToAction("Dashboard", "externalSupplier");
                         }
                     }
 

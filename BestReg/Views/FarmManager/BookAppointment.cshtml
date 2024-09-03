@@ -1,19 +1,70 @@
 ﻿@model BestReg.Data.VetAppointment
 
-<h2>Book an Appointment</h2>
+<!-- Custom Styles -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+    }
 
-<form asp-action="BookAppointment">
-    <div class="form-group">
-        <label asp-for="AppointmentType" class="control-label">Appointment Type</label>
-        <select asp-for="AppointmentType" class="form-control" asp-items="ViewBag.AppointmentTypes"></select>
-        <span asp-validation-for="AppointmentType" class="text-danger"></span>
+    .card-custom {
+        margin-top: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .card-header-custom {
+        background-color: #007bff;
+        color: white;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .card-body-custom {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    <h2 class="mb-0">Book an Appointment</h2>
+                </div>
+                <div class="card-body card-body-custom">
+                    <form asp-action="BookAppointment">
+                        <div class="form-group">
+                            <label asp-for="AppointmentType" class="control-label">Appointment Type</label>
+                            <select asp-for="AppointmentType" class="form-control" asp-items="ViewBag.AppointmentTypes"></select>
+                            <span asp-validation-for="AppointmentType" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Available Time Slots</label>
+                            <select name="selectedSlotId" class="form-control" asp-items="ViewBag.AvailableSlots"></select>
+                            <span asp-validation-for="AppointmentType" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Book Appointment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label class="control-label">Available Time Slots</label>
-        <select name="selectedSlotId" class="form-control" asp-items="ViewBag.AvailableSlots"></select>
-        <span asp-validation-for="AppointmentType" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Book Appointment</button>
-</form>
+</div>

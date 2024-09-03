@@ -1,20 +1,103 @@
 ﻿@model BestReg.Models.CostAnalysisViewModel
 
-<h2>Cost Analysis</h2>
+<!-- Custom Styles -->
+<style>
+    .card-custom {
+        background-color: #343a40; /* Dark gray background */
+        border-color: #495057; /* Border color */
+        color: white; /* White text */
+    }
 
-<div class="row">
-    <div class="col-md-4">
-        <h3>Total Appointments</h3>
-        <p>@Model.TotalAppointments</p>
-    </div>
-    <div class="col-md-4">
-        <h3>Total Vaccinations</h3>
-        <p>@Model.TotalVaccinations</p>
-    </div>
-    <div class="col-md-4">
-        <h3>Total Feedings</h3>
-        <p>@Model.TotalFeedings</p>
+    .card-header-custom {
+        background-color: #495057; /* Slightly lighter gray for header */
+        color: white; /* White text */
+        border-bottom: 1px solid #6c757d; /* Border color */
+    }
+
+    .dashboard-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #17a2b8; /* Teal color */
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .card-body-custom {
+        padding: 2rem;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="card card-custom shadow-lg">
+        <div class="card-header card-header-custom">
+            <h4 class="mb-0">Cost Analysis</h4>
+        </div>
+        <div class="card-body card-body-custom">
+            <div class="dashboard-title">Cost Analysis Overview</div>
+
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <h3>Total Appointments</h3>
+                    <p>@Model.TotalAppointments</p>
+                </div>
+                <div class="col-md-4">
+                    <h3>Total Vaccinations</h3>
+                    <p>@Model.TotalVaccinations</p>
+                </div>
+                <div class="col-md-4">
+                    <h3>Total Feedings</h3>
+                    <p>@Model.TotalFeedings</p>
+                </div>
+            </div>
+
+            <div class="chart-container mt-5">
+                <canvas id="costAnalysisChart"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Add more detailed analysis as needed -->
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('costAnalysisChart').getContext('2d');
+        var costAnalysisChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Total Appointments', 'Total Vaccinations', 'Total Feedings'],
+                datasets: [{
+                    label: 'Cost Analysis',
+                    data: [
+        @Model.TotalAppointments,
+        @Model.TotalVaccinations,
+        @Model.TotalFeedings
+                            ],
+                    backgroundColor: [
+                        'rgba(23, 162, 184, 0.2)', // Teal color
+                        'rgba(40, 167, 69, 0.2)',  // Green color
+                        'rgba(255, 193, 7, 0.2)'   // Yellow color
+                    ],
+                    borderColor: [
+                        'rgba(23, 162, 184, 1)',   // Teal color
+                        'rgba(40, 167, 69, 1)',    // Green color
+                        'rgba(255, 193, 7, 1)'     // Yellow color
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+}

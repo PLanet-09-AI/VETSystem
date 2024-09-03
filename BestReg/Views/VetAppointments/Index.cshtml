@@ -4,91 +4,153 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<!-- Custom Styles -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.StartTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AppointmentType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VetAdminId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsBooked)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Canceled)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeclineReason)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsDeclined)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsNotified)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AppointmentType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VetAdminId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsBooked)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Canceled)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeclineReason)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsDeclined)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsNotified)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #007bff;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
 
-}
-    </tbody>
+    .card-custom {
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
 
-</table>
-<ul>
-    <li><a asp-action="DiagnosisCheckup">Perform Diagnosis Checkup</a></li>
-    <li><a asp-action="ScheduleVaccination">Schedule Vaccination</a></li>
-    <li><a asp-action="RecordFeeding">Record Feeding</a></li>
-    <li><a asp-action="RequestRestock">Request Nutrition Restock</a></li>
-    <li><a asp-action="MedicalRecords">View Medical Records</a></li>
-    <li><a asp-action="CostAnalysis">Cost Analysis Report</a></li>
-    <li><a asp-action="ScheduleEvent">Schedule Event</a></li>
-</ul>
+    .card-header-custom {
+        background-color: #007bff;
+        color: white;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .card-body-custom {
+        padding: 20px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        margin-right: 5px;
+        font-size: 1rem;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+    .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+            .sidebar ul li a {
+                color: white;
+                text-decoration: none;
+                font-size: 1.1rem;
+            }
+
+                .sidebar ul li a:hover {
+                    color: #007bff;
+                }
+</style>
+
+<div class="container">
+    <h1>Vet Appointments</h1>
+
+    <div class="row">
+        <!-- Cardholder for Table -->
+        <div class="col-md-8 mb-3">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">Appointments List</h4>
+                </div>
+                <div class="card-body card-body-custom">
+                    <p>
+                        <a asp-action="Create" class="btn">Create New</a>
+                    </p>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.StartTime)</th>
+                                <th>@Html.DisplayNameFor(model => model.EndTime)</th>
+                                <th>@Html.DisplayNameFor(model => model.AppointmentType)</th>
+                                <th>@Html.DisplayNameFor(model => model.VetAdminId)</th>
+                                <th>@Html.DisplayNameFor(model => model.IsBooked)</th>
+                                <th>@Html.DisplayNameFor(model => model.Canceled)</th>
+                                <th>@Html.DisplayNameFor(model => model.DeclineReason)</th>
+                                <th>@Html.DisplayNameFor(model => model.IsDeclined)</th>
+                                <th>@Html.DisplayNameFor(model => model.IsNotified)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.StartTime)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.EndTime)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.AppointmentType)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.VetAdminId)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.IsBooked)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Canceled)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.DeclineReason)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.IsDeclined)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.IsNotified)</td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm">Edit</a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cardholder for Sidebar Links -->
+        <div class="col-md-4 mb-3">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">Quick Links</h4>
+                </div>
+                <div class="card-body card-body-custom">
+                    <ul>
+                        <li><a asp-action="RequestRestock">Request Nutrition Restock</a></li>
+                        <li><a asp-action="MedicalRecords">View Medical Records</a></li>
+                        <li><a asp-action="CostAnalysis">Cost Analysis Report</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

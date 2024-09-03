@@ -86,14 +86,12 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="PendingAppointments">Pending Appointments</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="VetAppointments" asp-action="Schedule">Appointment Schedule</a>
-                                </li>
+                                
                             }
                             if (roles.Contains("ExternalSupplier"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Supplier" asp-action="Orders">Supplier Orders</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="externalSupplier" asp-action="Dashboard">Supplier Orders</a>
                                 </li>
                             }
                             if (roles.Contains("Student"))
