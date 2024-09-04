@@ -1,10 +1,6 @@
 ﻿@model BestReg.Models.ConductCheckupViewModel
 
-@{
-    var animal = Model.Animal; // This should now be properly initialized
-}
-
-<h1>Conduct Checkup for @animal.Name</h1>
+<h1>Conduct Checkup for @Model.Name</h1>
 
 <form asp-action="ConductCheckup" method="post">
     <input type="hidden" asp-for="AnimalId" />
@@ -22,9 +18,9 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="TreatmentInfo.Diagnosis" class="control-label"></label>
-        <input asp-for="TreatmentInfo.Diagnosis" class="form-control" />
-        <span asp-validation-for="TreatmentInfo.Diagnosis" class="text-danger"></span>
+        <label asp-for="Diagnosis" class="control-label"></label>
+        <input asp-for="Diagnosis" class="form-control" />
+        <span asp-validation-for="Diagnosis" class="text-danger"></span>
     </div>
 
     <div class="form-group">

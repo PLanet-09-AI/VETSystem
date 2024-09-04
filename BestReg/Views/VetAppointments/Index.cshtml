@@ -1,8 +1,11 @@
 ﻿@model IEnumerable<BestReg.Data.VetAppointment>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Vet Appointments Index";
 }
+
+<!-- Add Font Awesome CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <!-- Custom Styles -->
 <style>
@@ -40,7 +43,8 @@
     .btn {
         display: inline-block;
         padding: 8px 16px;
-        margin-right: 5px;
+        margin-right: 10px;
+        margin-bottom: 10px;
         font-size: 1rem;
         color: white;
         background-color: #007bff;
@@ -49,6 +53,10 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+        .btn i {
+            margin-right: 5px;
+        }
 
         .btn:hover {
             background-color: #0056b3;
@@ -80,34 +88,63 @@
                 .sidebar ul li a:hover {
                     color: #007bff;
                 }
+
+    .table-custom {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .table-container {
+        padding: 20px;
+    }
+
+    .sidebar-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 </style>
 
 <div class="container">
     <h1>Vet Appointments</h1>
 
     <div class="row">
+        <!-- Cardholder for Sidebar Links -->
+        <div class="col-md-3 mb-3">
+            <div class="card card-custom sidebar-card">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">Quick Links</h4>
+                </div>
+                <div class="card-body card-body-custom">
+                    <ul>
+                        <li><a asp-action="RequestRestock">Request Nutrition Restock</a></li>
+                        <li><a asp-action="MedicalRecords">View Medical Records</a></li>
+                        <li><a asp-action="CostAnalysis">Cost Analysis Report</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- Cardholder for Table -->
-        <div class="col-md-8 mb-3">
+        <div class="col-md-9 mb-3">
             <div class="card card-custom">
                 <div class="card-header card-header-custom">
                     <h4 class="mb-0">Appointments List</h4>
                 </div>
-                <div class="card-body card-body-custom">
+                <div class="card-body card-body-custom table-container">
                     <p>
-                        <a asp-action="Create" class="btn">Create New</a>
+                        <a asp-action="Create" class="btn">
+                            <i class="fas fa-plus-circle"></i> Create New
+                        </a>
                     </p>
-                    <table class="table">
+                    <table class="table table-custom">
                         <thead>
                             <tr>
                                 <th>@Html.DisplayNameFor(model => model.StartTime)</th>
                                 <th>@Html.DisplayNameFor(model => model.EndTime)</th>
                                 <th>@Html.DisplayNameFor(model => model.AppointmentType)</th>
-                                <th>@Html.DisplayNameFor(model => model.VetAdminId)</th>
                                 <th>@Html.DisplayNameFor(model => model.IsBooked)</th>
-                                <th>@Html.DisplayNameFor(model => model.Canceled)</th>
-                                <th>@Html.DisplayNameFor(model => model.DeclineReason)</th>
-                                <th>@Html.DisplayNameFor(model => model.IsDeclined)</th>
-                                <th>@Html.DisplayNameFor(model => model.IsNotified)</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -118,37 +155,22 @@
                                     <td>@Html.DisplayFor(modelItem => item.StartTime)</td>
                                     <td>@Html.DisplayFor(modelItem => item.EndTime)</td>
                                     <td>@Html.DisplayFor(modelItem => item.AppointmentType)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.VetAdminId)</td>
                                     <td>@Html.DisplayFor(modelItem => item.IsBooked)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Canceled)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.DeclineReason)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.IsDeclined)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.IsNotified)</td>
                                     <td>
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm">Edit</a>
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                                            <i class="fas fa-info-circle"></i> Details
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </a>
                                     </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cardholder for Sidebar Links -->
-        <div class="col-md-4 mb-3">
-            <div class="card card-custom">
-                <div class="card-header card-header-custom">
-                    <h4 class="mb-0">Quick Links</h4>
-                </div>
-                <div class="card-body card-body-custom">
-                    <ul>
-                        <li><a asp-action="RequestRestock">Request Nutrition Restock</a></li>
-                        <li><a asp-action="MedicalRecords">View Medical Records</a></li>
-                        <li><a asp-action="CostAnalysis">Cost Analysis Report</a></li>
-                    </ul>
                 </div>
             </div>
         </div>

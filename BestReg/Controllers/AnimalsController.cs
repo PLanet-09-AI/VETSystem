@@ -105,69 +105,93 @@ namespace BestReg.Controllers
             return View(animal);
         }
 
-        // GET: Animals/ConductCheckup/5
+        // Action for vets to conduct a checkup
         [HttpGet]
-        public async Task<IActionResult> ConductCheckup(int? id)
+        public async Task<IActionResult> ConductCheckup(int animalId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var animal = await _context.Animals.FindAsync(id);
+            var animal = await _context.Animals.FindAsync(animalId);
             if (animal == null)
             {
                 return NotFound();
             }
 
-            var model = new ConductCheckupViewModel
+            var viewModel = new ConductCheckupViewModel
             {
                 AnimalId = animal.Id,
-                Animal = animal,
+                Name = animal.Name,
+                Status = animal.Status,
+                Species = animal.Species,
                 HealthMetrics = new HealthMetrics(),
-                TreatmentInfo = new IllnessTreatmentInfo()
+                TreatmentInfo = new IllnessTreatmentInfo(),
+                Animal = animal
             };
 
-            return View(model);
+            return View(viewModel);
         }
 
-        // POST: Animals/ConductCheckup
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConductCheckup(ConductCheckupViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Fetch the animal from the database
                 var animal = await _context.Animals.FindAsync(model.AnimalId);
-                if (animal == null)
+                if (animal != null)
                 {
-                    return NotFound();
+                    // Create a new MedicalRecord entry
+                    var medicalRecord = new MedicalRecord
+                    {
+                        AnimalId = model.AnimalId,
+                        Diagnosis = model.TreatmentInfo.Diagnosis,
+                        Treatment = model.TreatmentInfo.Treatment,
+                        HealthMetrics = model.HealthMetrics,
+                        IllnessTreatmentInfo = model.TreatmentInfo,
+                        CheckupDate = DateTime.Now // Set the checkup date to the current date
+                    };
+
+                    // Add the medical record to the animal's medical records
+                    animal.MedicalRecords.Add(medicalRecord);
+
+                    // Save the changes to the database
+                    _context.MedicalRecords.Add(medicalRecord);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("AcceptedAppointments");
                 }
-
-                // Create a new MedicalRecord entry
-                var medicalRecord = new MedicalRecord
-                {
-                    AnimalId = model.AnimalId,
-                    Diagnosis = model.Diagnosis,
-                    Treatment = model.TreatmentInfo.Treatment,
-                    RecordDate = DateTime.Now,
-                    HealthMetrics = model.HealthMetrics,
-                    IllnessTreatmentInfo = model.TreatmentInfo,
-                    CheckupDate = DateTime.Now
-                };
-
-                // Add the medical record to the database
-                _context.MedicalRecords.Add(medicalRecord);
-                await _context.SaveChangesAsync();
-
-                // Return a JSON response for AJAX success handling
-                return Json(new { success = true, message = "Diagnosis submitted successfully!" });
             }
 
-            // Return validation errors if the model state is invalid
-            return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
+            return View(model);
         }
+        
+        // Action for farmworkers to add an animal to an appointment
+        [HttpGet]
+        public IActionResult AddAnimalToAppointment(int appointmentId)
+        {
+            var viewModel = new AddAnimalToAppointmentViewModel
+            {
+                AppointmentId = appointmentId,
+                Animals = _context.Animals.ToList() // Fetch all animals from the database
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAnimalToAppointment(AddAnimalToAppointmentViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var appointment = await _context.VetAppointments.FindAsync(model.AppointmentId);
+                if (appointment != null)
+                {
+                    appointment.AnimalId = model.SelectedAnimalId;
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("AcceptedAppointments");
+                }
+            }
+
+            return View(model);
+        }
+
 
         // GET: Animals/SearchAnimal
         [HttpGet]

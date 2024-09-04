@@ -1,0 +1,37 @@
+﻿@model IEnumerable<BestReg.Data.VetAppointment>
+
+<h2>Accepted Appointments</h2>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Appointment ID</th>
+                <th>Animal ID</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var appointment in Model)
+            {
+                <tr>
+                    <td>@appointment.Id</td>
+                    <td>@appointment.AnimalId</td>
+                    <td>@appointment.StartTime</td>
+                    <td>@appointment.EndTime</td>
+                    <td>
+                        <!-- Redirect to AddAnimalToAppointment action in AnimalsController -->
+                        <a asp-controller="Animals" asp-action="AddAnimalToAppointment" asp-route-appointmentId="@appointment.Id" class="btn btn-primary">Add Animal</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No accepted appointments found.</p>
+}

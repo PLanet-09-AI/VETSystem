@@ -4,13 +4,13 @@
     {
         public int Id { get; set; }
         public int AnimalId { get; set; }
-        public DateTime RecordDate { get; set; }
+        public DateTime RecordDate { get; set; } = DateTime.Now; // Automatically set the record date to now
         public string Treatment { get; set; }
         public string Diagnosis { get; set; }
         public Animal Animal { get; set; }
-        public IllnessTreatmentInfo IllnessTreatmentInfo { get; set; } // Property defined once
-        public DateTime CheckupDate { get; set; } // Property defined once
-        public HealthMetrics HealthMetrics { get; set; }
+        public IllnessTreatmentInfo IllnessTreatmentInfo { get; set; } // Stores diagnosis and treatment info
+        public HealthMetrics HealthMetrics { get; set; } // Stores health metrics like weight and temperature
+        public DateTime CheckupDate { get; set; } = DateTime.Now; // Automatically set the checkup date to now
 
         // Additional fields if needed
     }
